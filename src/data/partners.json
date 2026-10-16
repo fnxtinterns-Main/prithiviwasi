@@ -1,0 +1,7 @@
+[
+  { "id": "agents-of-change", "name": "Agents of Change", "category": "Strategic Partner", "tagline": "Empowering the Future", "logo": "/assets/agents_of_change_logo.jpg" },
+  { "id": "gramin-vikas-trust", "name": "Gramin Vikas Kendra", "category": "Rural Ally", "tagline": "Grassroots Tribal Education", "logo": "/assets/logo.png" },
+  { "id": "prakriti-rakshak", "name": "Prakriti Rakshak Forum", "category": "Environmental", "tagline": "Forest & Biodiversity Stewardship", "logo": "/assets/logo.png" },
+  { "id": "jharkhand-youth-forum", "name": "Jharkhand Youth Forum", "category": "Youth Network", "tagline": "Student Climate Ambassadors", "logo": "/assets/agents_of_change_logo.jpg" },
+  { "id": "manav-seva-mission", "name": "Manav Seva Mission", "category": "Humanitarian", "tagline": "Health & Nutrition Relief", "logo": "/assets/logo.png" }
+]

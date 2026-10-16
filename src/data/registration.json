@@ -1,0 +1,66 @@
+{
+  "prithiviwasi": {
+    "key": "prithiviwasi",
+    "name": "Prithiviwasi Seva aur Sudhar Sangathan",
+    "hindiName": "पृथ्वीवासी सेवा और सुधार संगठन",
+    "subtitle": "Public Charitable Trust for Human Development (Manav Kalyan) Since 2006",
+    "logo": "/assets/logo.png",
+    "legalStatus": "Public Charitable Trust",
+    "date": "27/09/2008",
+    "place": "Ranchi, Jharkhand",
+    "regNo": "19317/2344",
+    "trustType": "Public Charitable Trust",
+    "status": "Active & Verified",
+    "mainAddress": "LIG/R156, Sai Bhawan, Harmu Housing Colony, Ranchi, Jharkhand - 834002",
+    "branchAddress": "505, Mahabir Tower, Main Road, Ranchi, Jharkhand - 834001",
+    "address": "LIG/R156, Sai Bhawan, Harmu Housing Colony, Ranchi, Jharkhand - 834002 (Head Office) • 505, Mahabir Tower, Main Road, Ranchi, Jharkhand - 834001 (Admin Office)",
+    "phoneNumbers": ["9471527107", "9284023833", "0651-2241346", "9801506511"],
+    "emails": ["prithviwasisewa@gmail.com", "contact@prithviwasi.org"],
+    "authority": "Sub-Registrar Office, Ranchi, Govt. of Jharkhand",
+    "objectives": [
+      "Manav Kalyan & Holistic Community Welfare",
+      "Environmental Rejuvenation & Afforestation",
+      "Tribal & Rural Education, Healthcare, and Livelihoods",
+      "Cultural & Moral Sanskar Awakening"
+    ],
+    "objectivesHi": [
+      "मानव कल्याण एवं सर्वांगीण सामुदायिक उत्थान",
+      "सघन वृक्षारोपण एवं पर्यावरण संरक्षण",
+      "वनवासी व ग्रामीण बाल शिक्षा, स्वास्थ्य एवं आजीविका",
+      "सांस्कृतिक एवं नैतिक संस्कार जागरण"
+    ]
+  },
+  "agentsOfChange": {
+    "key": "agentsOfChange",
+    "name": "Agents of Change",
+    "hindiName": "एजेंट्स ऑफ चेंज",
+    "subtitle": "Registered Society • 12A/12AA Tax-Exempt Status Since 2000",
+    "logo": "/assets/agents_of_change_logo.jpg",
+    "legalStatus": "Society",
+    "date": "14/07/2000 (Constituted) • 21/02/2011 (12A Order)",
+    "constitutionDate": "14/07/2000",
+    "orderDate": "21/02/2011",
+    "place": "Vasant Kunj, New Delhi",
+    "regNo": "DEL - AR21181 - 21022011",
+    "orderNo": "12033 (File: DIT(E) I 2010-11)",
+    "panNo": "AABAA4201F",
+    "girNo": "A-2976",
+    "trustType": "Registered Society (u/s 12A / 12AA)",
+    "status": "Official 12A/12AA Registered Society",
+    "address": "Flat No. 1339, D-Block, Pkt-1, Vasant Kunj, New Delhi - 110001",
+    "authority": "Director of Income Tax (Exemption), Delhi",
+    "taxExemption": "Registered u/s 12A r.w.s. 12AA of the Income Tax Act, 1961",
+    "objectives": [
+      "Youth Mobilization for Climate Action & Earth Stewardship",
+      "Charitable Human Welfare & Education Initiatives",
+      "Grassroots Innovation & Social Entrepreneurship",
+      "SDG 2030 Community Alignment & Advocacy"
+    ],
+    "objectivesHi": [
+      "जलवायु कार्रवाई एवं पृथ्वी संरक्षण हेतु युवा लामबंदी",
+      "कल्याणकारी सामाजिक कार्य एवं बाल शिक्षा अभियान",
+      "धरातलीय नवाचार एवं सामाजिक उद्यमिता",
+      "संयुक्त राष्ट्र SDG 2030 लक्ष्यों की प्राप्ति में सामुदायिक सहभागिता"
+    ]
+  }
+}
