@@ -1,3 +1,4 @@
+
 [
   {
     "id": "coal-mining",
@@ -5,8 +6,16 @@
     "title": "Coal Mining Community Rehabilitation",
     "subtitle": "Breathing Life into Industrial Corridors",
     "description": "Comprehensive healthcare, green buffer zones, and alternative clean livelihoods for families living adjacent to open-cast coal mines.",
-    "sdgBadges": ["SDG 3: Good Health", "SDG 8: Decent Work", "SDG 15: Life on Land"],
-    "pillars": ["Health", "Education", "Environment"]
+    "sdgBadges": [
+      "SDG 3: Good Health",
+      "SDG 8: Decent Work",
+      "SDG 15: Life on Land"
+    ],
+    "pillars": [
+      "Health",
+      "Education",
+      "Environment"
+    ]
   },
   {
     "id": "rural-development",
@@ -14,8 +23,17 @@
     "title": "Holistic Rural & Tribal Development",
     "subtitle": "Revitalizing Traditional Gramin Ecosystems",
     "description": "Solar microgrids, water pond rejuvenation, and organic agronomy to create resilient, self-sustaining village economies.",
-    "sdgBadges": ["SDG 6: Clean Water", "SDG 7: Affordable Energy", "SDG 11: Sustainable Communities"],
-    "pillars": ["Development", "Health", "Education", "Environment"]
+    "sdgBadges": [
+      "SDG 6: Clean Water",
+      "SDG 7: Affordable Energy",
+      "SDG 11: Sustainable Communities"
+    ],
+    "pillars": [
+      "Development",
+      "Health",
+      "Education",
+      "Environment"
+    ]
   },
   {
     "id": "women-empowerment",
@@ -23,8 +41,16 @@
     "title": "Women Empowerment & Dignity",
     "subtitle": "Empowering Rural Matri Shakti",
     "description": "Livelihood skill centers, legal literacy clinics, and maternal wellness drives enabling village women to lead economic change.",
-    "sdgBadges": ["SDG 5: Gender Equality", "SDG 8: Decent Work", "SDG 10: Reduced Inequalities"],
-    "pillars": ["Health", "Education", "Livelihood"]
+    "sdgBadges": [
+      "SDG 5: Gender Equality",
+      "SDG 8: Decent Work",
+      "SDG 10: Reduced Inequalities"
+    ],
+    "pillars": [
+      "Health",
+      "Education",
+      "Livelihood"
+    ]
   },
   {
     "id": "handicap-empowerment",
@@ -32,16 +58,15 @@
     "title": "Divyangjan (Differently-Abled) Empowerment",
     "subtitle": "Dignified Accessibility & Inclusion",
     "description": "Assistive aid distribution, accessible infrastructure adaptations, and specialized inclusive vocational mentorship.",
-    "sdgBadges": ["SDG 10: Reduced Inequalities", "SDG 4: Quality Education", "SDG 11: Sustainable Communities"],
-    "pillars": ["Health", "Education", "Accessibility"]
-  },
-  {
-    "id": "sdg-30-alignment",
-    "category": "what",
-    "title": "UN SDG-2030 Localized Action Agenda",
-    "subtitle": "Bridging Global Goals with Local Realities",
-    "description": "Grassroots monitoring and local citizen execution aligned with the United Nations Sustainable Development Goals by 2030.",
-    "sdgBadges": ["SDG 13: Climate Action", "SDG 1: No Poverty", "SDG 17: Partnerships"],
-    "pillars": ["All SDG Pillars", "Climate Resilience", "Civil Society Partnerships"]
+    "sdgBadges": [
+      "SDG 10: Reduced Inequalities",
+      "SDG 4: Quality Education",
+      "SDG 11: Sustainable Communities"
+    ],
+    "pillars": [
+      "Health",
+      "Education",
+      "Accessibility"
+    ]
   }
 ]

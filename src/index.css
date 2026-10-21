@@ -27,13 +27,34 @@
   --shadow-btn: 0 10px 25px -5px rgba(22, 163, 74, 0.4);
 }
 
-*, *::before, *::after {
+
+/* Global reset: preserve Tailwind spacing utilities */
+*,
+*::before,
+*::after {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* Reset only the page-level elements */
+html,
+body,
+#root {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  min-width: 320px;
+}
+
+#root {
+  min-height: 100vh;
+  padding: 0;
+}
+
 
 html, body {
   width: 100%;
@@ -3117,4 +3138,184 @@ html, body {
 
 
 
+/* FINAL FIX: Exact horizontal centering */
+.movement-section-block:has(.section-pill-tag) {
+  width: 100% !important;
+  max-width: none !important;
+  box-sizing: border-box !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  text-align: center !important;
+}
 
+.movement-section-block:has(.section-pill-tag) .movement-section-inner {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  margin: 0 auto !important;
+  text-align: center !important;
+}
+
+.movement-section-block:has(.section-pill-tag) .section-pill-tag {
+  display: flex !important;
+  width: fit-content !important;
+  margin: 0 auto 12px !important;
+}
+
+.movement-section-block:has(.section-pill-tag) .section-main-heading {
+  display: block !important;
+  width: 100% !important;
+  text-align: center !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.movement-section-block:has(.section-pill-tag) .section-lead-desc {
+  width: 100% !important;
+  max-width: 800px !important;
+  text-align: center !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.movement-section-block:has(.section-pill-tag) .section-points-list {
+  width: fit-content !important;
+  max-width: 100% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+#root {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+/* Fix root layout without affecting other pages */
+html,
+body,
+#root {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+}
+
+#root {
+  padding: 0;
+}
+
+/* Keep the What page hero content centered */
+.what-page-hero {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
+.what-page-hero > div {
+  width: 100%;
+  max-width: 896px;
+  margin-inline: auto;
+  align-items: center;
+  text-align: center;
+}
+
+/* What page alignment fix */
+.what-page {
+  width: 100%;
+  min-height: 100vh;
+}
+
+.what-page .what-page-hero {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
+.what-page .what-page-hero-content {
+  width: 100%;
+  max-width: 896px;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.what-page .what-page-hero-content > h1,
+.what-page .what-page-hero-content > p {
+  width: 100%;
+  text-align: center;
+}
+
+.what-page .what-page-programs {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* What page: center the Programs section heading */
+.what-page {
+  width: 100%;
+}
+
+.what-page .what-page-hero-content {
+  margin-left: auto;
+  margin-right: auto;
+  align-items: center;
+  text-align: center;
+}
+
+.what-page .what-page-section-heading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.what-page .what-page-section-heading > * {
+  width: 100%;
+  text-align: center;
+}
+
+.what-page .what-page-section-heading h1,
+.what-page .what-page-section-heading h2,
+.what-page .what-page-section-heading h3,
+.what-page .what-page-section-heading p,
+.what-page .what-page-section-heading span {
+  text-align: center;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.what-page {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+.what-page .max-w-7xl {
+  width: 100%;
+  max-width: 80rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (max-width: 640px) {
+  .what-page .max-w-7xl {
+    width: 100%;
+  }
+}
