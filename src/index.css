@@ -368,6 +368,13 @@ html, body {
 }
 
 @media (max-width: 768px) {
+  html, body {
+    width: 100%;
+    min-height: 100%;
+    overflow-x: clip;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
 
   .landing-master-wrapper {
     position: relative;
@@ -3314,8 +3321,6 @@ body,
     width: 100%;
   }
 }
-
-
 /* SMART BOARD & ULTRA-WIDE / 4K DISPLAY ADAPTATION */
 @media (min-width: 1920px) {
   .landing-master-wrapper {

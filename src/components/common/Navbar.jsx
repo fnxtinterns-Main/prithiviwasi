@@ -139,46 +139,36 @@ export default function Navbar() {
             })}
           </nav>
 
-          {/* Right Action Cluster: Partner + Landing Scene + Language Switcher + Donate CTA */}
-          <div className="flex items-center gap-2.5 sm:gap-3">
-            {/* Clickable Alliance Partner Logo */}
+          {/* Right Action Cluster: Partner + Language Switcher + Donate CTA + Mobile Hamburger + Rightmost Return Arrow */}
+          <div className="flex items-center gap-2 sm:gap-2.5">
+            {/* Clickable Alliance Partner Logo (Enlarged & Roomy) */}
             <button
               onClick={() => openRegModal('agentsOfChange')}
-              className="group hidden lg:flex items-center gap-2.5 p-1.5 pr-3 rounded-xl border border-gray-200/90 hover:border-emerald-300 hover:bg-emerald-50/50 transition-all cursor-pointer"
-              title="Click to view Agents of Change Partner Details"
+              className="group hidden lg:flex items-center gap-3 px-3.5 py-1.5 rounded-2xl border border-emerald-200/90 bg-white hover:border-emerald-400 hover:bg-emerald-50/70 shadow-xs hover:shadow-sm transition-all cursor-pointer"
+              title={isHindi ? "आधिकारिक सहयोगी संस्था विवरण देखें" : "Click to view Agents of Change Partner Details"}
             >
               <img
                 src="/assets/agents_of_change_logo.jpg"
                 alt="Agents of Change"
-                className="w-8 h-8 object-cover rounded-lg group-hover:scale-105 transition-transform"
+                className="w-10 h-10 object-cover rounded-xl border border-gray-100 group-hover:scale-105 transition-transform shadow-2xs shrink-0"
               />
-              <div className="text-left">
-                <span className="block text-xs font-bold text-gray-800 group-hover:text-[#0b5e34] leading-tight">
+              <div className="text-left leading-tight">
+                <span className="block text-sm font-black text-gray-900 group-hover:text-[#0b5e34] tracking-tight">
                   Agents of Change
                 </span>
-                <span className="block text-[10px] text-gray-500 font-medium leading-tight">
-                  {isHindi ? 'सहयोगी संस्था' : 'Official Partner'}
+                <span className="block text-xs text-emerald-700 font-bold">
+                  {isHindi ? 'आधिकारिक सहयोगी' : 'Official Alliance Partner'}
                 </span>
               </div>
             </button>
 
-            {/* Return to Cinematic Landing Poster */}
-            <Link
-              to="/"
-              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-[#0b5e34] bg-emerald-50 hover:bg-emerald-100/90 rounded-xl border border-emerald-200 transition-colors shadow-2xs"
-              title="Return to the cinematic full-screen landing scene"
-            >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>{isHindi ? 'लैंडिंग दृश्य' : 'Landing Scene'}</span>
-            </Link>
-
             {/* 
-              LANGUAGE SWITCHER BUTTON PLACED NEAR LANDING PAGE BUTTON
+              LANGUAGE SWITCHER BUTTON
               Switches the entire site between English and Hindi
             */}
             <button
               onClick={toggleLanguage}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl border transition-all cursor-pointer shadow-2xs bg-white text-gray-800 border-gray-300 hover:border-[#0b5e34] hover:bg-emerald-50/70"
+              className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-bold rounded-xl border transition-all cursor-pointer shadow-2xs bg-white text-gray-800 border-gray-300 hover:border-[#0b5e34] hover:bg-emerald-50/70 shrink-0"
               title={isHindi ? 'Switch site language to English' : 'वेबसाइट को हिंदी में देखें (Switch to Hindi)'}
             >
               <Globe className="w-3.5 h-3.5 text-[#0b5e34]" />
@@ -188,7 +178,7 @@ export default function Navbar() {
             {/* Authentic NGO Green Donate CTA Button */}
             <button
               onClick={openDonateModal}
-              className="flex items-center gap-1.5 px-4 sm:px-5 py-2 bg-[#0b5e34] hover:bg-[#073d22] active:bg-[#052b18] text-white rounded-xl text-sm font-bold shadow-xs hover:shadow-md transition-all cursor-pointer"
+              className="flex items-center gap-1.5 px-3.5 sm:px-5 py-2 bg-[#0b5e34] hover:bg-[#073d22] active:bg-[#052b18] text-white rounded-xl text-xs sm:text-sm font-bold shadow-xs hover:shadow-md transition-all cursor-pointer shrink-0"
             >
               <Heart className="w-4 h-4 text-rose-300 fill-rose-300" />
               <span>{isHindi ? 'सहयोग / दान' : 'Donate'}</span>
@@ -197,11 +187,21 @@ export default function Navbar() {
             {/* Mobile Hamburger Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="xl:hidden p-2 text-gray-700 hover:text-[#0b5e34] hover:bg-gray-100 rounded-xl transition-colors cursor-pointer"
+              className="xl:hidden p-2 text-gray-700 hover:text-[#0b5e34] hover:bg-gray-100 rounded-xl transition-colors cursor-pointer shrink-0"
               aria-label="Toggle Navigation Menu"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
+
+            {/* Return to Cinematic Landing Scene (Arrow-only, Right-most Corner) */}
+            <Link
+              to="/"
+              className="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 text-[#0b5e34] bg-emerald-50 hover:bg-emerald-100 active:bg-emerald-200 rounded-xl border border-emerald-200/90 hover:border-emerald-300 transition-all shadow-2xs hover:scale-105 active:scale-95 shrink-0 ml-0.5"
+              title={isHindi ? 'मुख्य लैंडिंग दृश्य पर वापस जाएं' : 'Return to Landing Scene'}
+              aria-label="Return to Landing Scene"
+            >
+              <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 text-[#0b5e34]" />
+            </Link>
           </div>
         </div>
       </div>
@@ -213,10 +213,10 @@ export default function Navbar() {
             <Link
               to="/"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex-1 flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-emerald-50/70 text-[#0b5e34] font-bold text-xs border border-emerald-200"
+              className="flex-1 flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-xl bg-emerald-50/70 text-[#0b5e34] font-bold text-xs border border-emerald-200"
             >
               <ArrowLeft className="w-4 h-4" />
-              <span>{isHindi ? '← लैंडिंग पोस्टर' : '← Landing Scene'}</span>
+              <span>{isHindi ? 'लैंडिंग दृश्य' : 'Landing Page'}</span>
             </Link>
 
             {/* Mobile Language Switcher */}

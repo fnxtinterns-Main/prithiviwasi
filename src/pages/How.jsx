@@ -28,6 +28,38 @@ import {
   GraduationCap,
 } from 'lucide-react';
 import { useModal } from '../context/ModalContext';
+import { useLanguage } from '../context/LanguageContext';
+
+const programTranslationsHi = {
+  'coal-mining': {
+    title: 'कोयला खनन क्षेत्र सामुदायिक पुनर्वास',
+    subtitle: 'औद्योगिक गलियारों में जीवन और हरियाली की पुनर्स्थापना',
+    description: 'खुले कोयला खदानों के समीप रहने वाले परिवारों के लिए व्यापक स्वास्थ्य सुरक्षा, ग्रीन बफर जोन और स्वच्छ वैकल्पिक आजीविका।',
+    sdgBadges: ['एसडीजी ३: उत्तम स्वास्थ्य', 'एसडीजी ८: सम्मानजनक कार्य', 'एसडीजी १५: भूमि पर जीवन'],
+    pillars: ['स्वास्थ्य', 'शिक्षा', 'पर्यावरण'],
+  },
+  'rural-development': {
+    title: 'समग्र ग्रामीण एवं वनवासी विकास',
+    subtitle: 'पारंपरिक ग्रामीण पारिस्थितिकी तंत्र का पुनर्जीवन',
+    description: 'सौर माइक्रोग्रिड, पारंपरिक तालाब जीर्णोद्धार और जैविक कृषि के माध्यम से आत्मनिर्भर और सशक्त ग्राम अर्थव्यवस्था का निर्माण।',
+    sdgBadges: ['एसडीजी ६: स्वच्छ जल', 'एसडीजी ७: स्वच्छ ऊर्जा', 'एसडीजी ११: टिकाऊ समुदाय'],
+    pillars: ['ग्राम विकास', 'स्वास्थ्य', 'शिक्षा', 'पर्यावरण'],
+  },
+  'women-empowerment': {
+    title: 'महिला सशक्तिकरण एवं स्वावलंबन',
+    subtitle: 'ग्रामीण मातृशक्ति का सम्मान और आर्थिक संबल',
+    description: 'आजीविका कौशल केंद्र, कानूनी साक्षरता कार्यशालाएं और मातृ स्वास्थ्य अभियान जिससे ग्रामीण महिलाएं आत्मनिर्भर बन सकें।',
+    sdgBadges: ['एसडीजी ५: लैंगिक समानता', 'एसडीजी ८: सम्मानजनक कार्य', 'एसडीजी १०: असमानता में कमी'],
+    pillars: ['स्वास्थ्य', 'शिक्षा', 'आजीविका'],
+  },
+  'handicap-empowerment': {
+    title: 'दिव्यांगजन सशक्तिकरण एवं स्वावलंबन',
+    subtitle: 'ससम्मान सुगमता, समावेशन एवं आत्मनिर्भरता',
+    description: 'सहायक उपकरण वितरण, सुगम्य बुनियादी ढांचा निर्माण और दिव्यांगजनों हेतु विशेष व्यावसायिक कौशल मार्गदर्शन।',
+    sdgBadges: ['एसडीजी १०: असमानता में कमी', 'एसडीजी ४: गुणवत्तापूर्ण शिक्षा', 'एसडीजी ११: टिकाऊ समुदाय'],
+    pillars: ['स्वास्थ्य', 'शिक्षा', 'सुगमता'],
+  },
+};
 
 const executionPlans = {
   'coal-mining': {
@@ -72,6 +104,49 @@ const executionPlans = {
   },
 };
 
+const executionPlansHi = {
+  'coal-mining': {
+    steps: [
+      'खनन प्रभावित गांवों की प्राथमिक स्वास्थ्य एवं पर्यावरणीय आवश्यकताओं का धरातलीय सर्वेक्षण।',
+      'निःशुल्क स्वास्थ्य शिविर, सुरक्षा किट वितरण, ग्रीन बफर जोन और वैकल्पिक आजीविका का समन्वय।',
+      'स्थानीय ग्राम पंचायतों, स्वयंसेवकों और सहयोगी संस्थाओं के साथ सक्रिय भागीदारी।',
+      'स्वास्थ्य सुधार, वायु गुणवत्ता राहत और आजीविका परिणामों का निरंतर मूल्यांकन।',
+    ],
+    outcomes:
+      'सुलभ स्वास्थ्य सेवाएं, पर्यावरण सुरक्षा चेतना और खनन प्रभावित परिवारों के लिए सम्मानजनक आजीविका।',
+  },
+  'rural-development': {
+    steps: [
+      'गांवों की जल समस्या, सौर ऊर्जा आवश्यकता और कृषि चुनौतियों का समग्र आकलन।',
+      'सामुदायिक नेतृत्व में तालाब जीर्णोद्धार, सौर ऊर्जा और जैविक खेती की कार्ययोजना।',
+      'पारंपरिक जल संरचनाओं के संरक्षण और सतत ग्राम विकास का क्रियान्वयन।',
+      'ग्रामीणों के साथ मासिक समीक्षा और स्वावलंबन की दिशा में निरंतर कदम।',
+    ],
+    outcomes:
+      'सशक्त ग्राम सहभागिता, प्राकृतिक संसाधनों का संरक्षण और आत्मनिर्भर ग्रामीण अर्थव्यवस्था।',
+  },
+  'women-empowerment': {
+    steps: [
+      'ग्रामीण मातृशक्ति की कौशल आवश्यकताओं और आजीविका संबंधी बाधाओं की पहचान।',
+      'सिलाई, हस्तशिल्प, प्राथमिक स्वास्थ्य और कानूनी साक्षरता कार्यशालाओं का आयोजन।',
+      'प्रशिक्षित बहनों को स्व-सहायता समूहों और स्थानीय बाजार से जोड़ना।',
+      'आर्थिक आत्मनिर्भरता और पारिवारिक स्तर पर जीवन सुधार का निरंतर अनुवर्तन।',
+    ],
+    outcomes:
+      'व्यावहारिक कौशल, कानूनी व स्वास्थ्य जागरूकता और महिलाओं के लिए सुरक्षित व सम्मानजनक स्वरोजगार।',
+  },
+  'handicap-empowerment': {
+    steps: [
+      'दिव्यांग भाई-बहनों की शारीरिक सुगमता की चुनौतियों और व्यक्तिगत आवश्यकताओं का सर्वेक्षण।',
+      'सहायक उपकरण (व्हीलचेयर, ट्राइसाइकिल, श्रवण यंत्र) और सुगम्य सुविधाओं का समन्वय।',
+      'समावेशी व्यावसायिक कौशल मार्गदर्शन और समाज में सम्मानजनक भागीदारी को प्रोत्साहन।',
+      'सुगमता सुधार और लाभार्थियों की प्रतिक्रिया के आधार पर निरंतर सहायता विस्तार।',
+    ],
+    outcomes:
+      'ससम्मान सामाजिक समावेशन, आत्मनिर्भर जीवन और मुख्यधारा के विकास अवसरों तक समान पहुंच।',
+  },
+};
+
 const defaultExecutionPlan = {
   steps: [
     'Assess community needs and identify priorities.',
@@ -81,6 +156,17 @@ const defaultExecutionPlan = {
   ],
   outcomes:
     'Improved community participation, coordinated activities and progress toward program objectives.',
+};
+
+const defaultExecutionPlanHi = {
+  steps: [
+    'सामुदायिक प्राथमिकताओं और सेवा आवश्यकताओं का सर्वेक्षण।',
+    'संबद्ध हितधारकों और स्वयंसेवकों के साथ विस्तृत कार्ययोजना तैयार करना।',
+    'धरातल पर निष्ठावान स्वयंसेवकों के सहयोग से गतिविधियों का संचालन।',
+    'लाभार्थियों की प्रतिक्रिया के आधार पर निरंतर सुधार और विस्तार।',
+  ],
+  outcomes:
+    'सशक्त जन-सहभागिता, समन्वित सेवा कार्य और निर्धारित लक्ष्यों की सफल प्राप्ति।',
 };
 
 const stepIcons = [ClipboardList, Users, Handshake, BarChart3];
@@ -326,7 +412,197 @@ const sdgPlans = [
   },
 ];
 
-function ExecutionSteps({ steps }) {
+const sdgPlansHiMap = {
+  1: {
+    title: 'शून्य गरीबी',
+    goal: 'कल्याणकारी योजनाओं, कौशल प्रशिक्षण और आजीविका के अवसरों तक पहुंच बढ़ाना।',
+    steps: [
+      'सामुदायिक सहभागिता से जरूरतमंद परिवारों की पहचान।',
+      'पात्र परिवारों को सरकारी व संस्थागत कल्याण योजनाओं से जोड़ना।',
+      'कौशल विकास प्रशिक्षण और स्थानीय रोजगार के अवसर उपलब्ध कराना।',
+      'सहायता परिणामों का दस्तावेजीकरण और प्रगति की निरंतर समीक्षा।',
+    ],
+    indicators: ['लाभान्वित परिवार', 'योजनाओं से जुड़ाव', 'आजीविका साधन'],
+  },
+  2: {
+    title: 'भुखमरी से मुक्ति',
+    goal: 'खाद्य सुरक्षा, पोषण जागरूकता और स्थानीय पोषण वाटिका को बढ़ावा देना।',
+    steps: [
+      'स्थानीय स्तर पर पोषण संबंधी प्राथमिक आवश्यकताओं की पहचान।',
+      'योग्य विशेषज्ञों के साथ पोषण एवं स्वास्थ्य शिक्षा शिविर।',
+      'घरों व स्कूलों में पोषण वाटिका और जैविक अन्न उपजाने को प्रोत्साहन।',
+      'सहभागिता और अनुवर्ती पोषण प्रगति का व्यवस्थित रिकॉर्ड।',
+    ],
+    indicators: ['जागरूक नागरिक', 'पोषण सत्र', 'स्थापित पोषण वाटिका'],
+  },
+  3: {
+    title: 'उत्कृष्ट स्वास्थ्य एवं कल्याण',
+    goal: 'खनन व ग्रामीण क्षेत्रों में बुनियादी स्वास्थ्य सेवा, परामर्श और रोग निवारण।',
+    steps: [
+      'दूरस्थ बस्तियों में निःशुल्क स्वास्थ्य जांच एवं परामर्श शिविर।',
+      'स्वच्छता, रोग निवारण और मातृ-शिशु स्वास्थ्य जागरूकता।',
+      'गंभीर मामलों में विशेषज्ञ अस्पतालों व केंद्रों हेतु सहायता।',
+      'स्वास्थ्य शिविरों और वितरित दवाओं का पारदर्शी लेखा-जोखा।',
+    ],
+    indicators: ['स्वास्थ्य शिविर', 'जांच किए गए ग्रामीण', 'वितरित सुरक्षा किट'],
+  },
+  4: {
+    title: 'गुणवत्तापूर्ण शिक्षा',
+    goal: 'संस्कारयुक्त, समावेशी और पर्यावरण चेतना आधारित प्राकृतिक शिक्षा।',
+    steps: [
+      'वृक्षों की छांव में अध्ययन (Siksha on Trees) और ग्रामीण अध्ययन केंद्र।',
+      'पाठ्य सामग्री, स्टेशनरी और पर्यावरण अध्ययन का निःशुल्क वितरण।',
+      'युवा स्वयंसेवकों को शिक्षण व संस्कार देने हेतु प्रेरित करना।',
+      'बच्चों की उपस्थिति और सीखने के स्तर में निरंतर सुधार का अनुवर्तन।',
+    ],
+    indicators: ['अध्ययन केंद्र', 'लाभान्वित विद्यार्थी', 'सक्रिय शिक्षक-स्वयंसेवक'],
+  },
+  5: {
+    title: 'लैंगिक समानता',
+    goal: 'ग्रामीण महिलाओं के लिए समान अवसर, गरिमा और नेतृत्व का विकास।',
+    steps: [
+      'महिलाओं के स्वास्थ्य, अधिकारों और सामाजिक सुरक्षा पर संवाद।',
+      'आत्मनिर्भर आजीविका और हस्तशिल्प/सिलाई कौशल कार्यशालाएं।',
+      'ग्राम स्तर पर महिला स्वयं-सहायता समूहों का गठन व सहयोग।',
+      'सशक्त हुई महिलाओं के अनुभवों और सफलता का आकलन।',
+    ],
+    indicators: ['प्रशिक्षित महिलाएं', 'जागरूकता बैठकें', 'सक्रिय स्व-सहायता समूह'],
+  },
+  6: {
+    title: 'स्वच्छ जल एवं स्वच्छता',
+    goal: 'सुरक्षित पेयजल, जल शोधन और ग्रामीण स्वच्छता सुविधाओं का विस्तार।',
+    steps: [
+      'पेयजल स्रोतों की गुणवत्ता और फ्लोराइड/प्रदूषण स्तर की जांच।',
+      'पारंपरिक कुओं और जलप्रपातों की सफाई व संरक्षण अभियान।',
+      'ग्रामीणों को जलजनित रोगों और स्वच्छता के प्रति जागरूक करना।',
+      'स्वच्छ किए गए जल स्रोतों और लाभान्वित परिवारों की निगरानी।',
+    ],
+    indicators: ['स्वच्छ जल स्रोत', 'जागरूकता अभियान', 'लाभान्वित ग्रामीण'],
+  },
+  7: {
+    title: 'सस्ती एवं स्वच्छ ऊर्जा',
+    goal: 'ग्रामीण व आदिवासी अंचलों में सौर ऊर्जा और पर्यावरण-अनुकूल विकल्पों को बढ़ावा।',
+    steps: [
+      'अंधेरे या बिजली संकट वाले गांवों में ऊर्जा जरूरतों का आकलन।',
+      'सौर लालटेन, सौर स्ट्रीट लाइट और ऊर्जा संरक्षण की जानकारी।',
+      'स्थानीय युवाओं को सौर उपकरणों के रखरखाव का बुनियादी प्रशिक्षण।',
+      'स्थापित सौर प्रकाश व्यवस्था और ईंधन बचत का रिकॉर्ड।',
+    ],
+    indicators: ['सौर उपकरण स्थापित', 'ऊर्जा जागरूकता सत्र', 'प्रकाशित बस्तियां'],
+  },
+  8: {
+    title: 'सम्मानजनक कार्य एवं आर्थिक वृद्धि',
+    goal: 'ग्रामीण युवाओं और कामगारों के लिए हुनर, सुरक्षा और टिकाऊ रोजगार।',
+    steps: [
+      'स्थानीय बाजार की मांग के अनुरूप व्यावसायिक कौशलों की पहचान।',
+      'व्यावहारिक प्रशिक्षण और स्वरोजगार मार्गदर्शन कार्यशालाएं।',
+      'खनन क्षेत्र के श्रमिकों के लिए सुरक्षा और कानूनी अधिकारों की जानकारी।',
+      'प्रशिक्षण के बाद स्वरोजगार शुरू करने वाले युवाओं की प्रगति।',
+    ],
+    indicators: ['कौशल प्राप्त युवा', 'मार्गदर्शन शिविर', 'सफल स्वरोजगार'],
+  },
+  9: {
+    title: 'उद्योग, नवाचार एवं बुनियादी ढांचा',
+    goal: 'स्थानीय आवश्यकताओं हेतु सरल, पर्यावरण-अनुकूल और टिकाऊ समाधान।',
+    steps: [
+      'ग्रामीण चुनौतियों के लिए न्यूनतम लागत वाले तकनीकी नवाचारों की खोज।',
+      'पर्यावरण-अनुकूल सामग्री और देसी ज्ञान का उपयोग कर निर्माण।',
+      'स्थानीय कारीगरों और नवोन्मेषकों को मंच व संसाधन उपलब्ध कराना।',
+      'सफल नवाचारों का अन्य ग्रामीण क्षेत्रों में प्रसार।',
+    ],
+    indicators: ['लागू नवाचार', 'सहयोगी कारीगर', 'टिकाऊ ग्राम परियोजनाएं'],
+  },
+  10: {
+    title: 'असमानता में कमी',
+    goal: 'दिव्यांगजनों और वंचित वर्गों के लिए सामाजिक सुरक्षा व समान अधिकार।',
+    steps: [
+      'दिव्यांगजनों की विशिष्ट सहायता और सुगमता जरूरतों की पहचान।',
+      'सहायक उपकरण, कानूनी सलाह और सरकारी प्रमाण-पत्रों में मदद।',
+      'समावेशी सामाजिक आयोजनों और कार्यस्थलों का निर्माण।',
+      'समानता और गरिमापूर्ण जीवन की दिशा में प्रगति का मूल्यांकन।',
+    ],
+    indicators: ['सहायता प्राप्त दिव्यांगजन', 'उपकरण वितरण', 'समावेशी पहल'],
+  },
+  11: {
+    title: 'टिकाऊ शहर एवं समुदाय',
+    goal: 'स्वच्छ, हरित और सुरक्षित ग्रामीण व नगरीय परिवेश का निर्माण।',
+    steps: [
+      'सार्वजनिक स्थलों की सफाई और कचरा निस्तारण योजना।',
+      'सामुदायिक वाटिकाओं और हरित सार्वजनिक परिसरों का विकास।',
+      'प्राकृतिक आपदाओं से बचाव और प्राथमिक सुरक्षा की तैयारी।',
+      'स्वच्छता अभियान और जनसहभागिता का नियमित रिकॉर्ड।',
+    ],
+    indicators: ['स्वच्छता अभियान', 'हरित स्थल विकसित', 'सक्रिय नागरिक'],
+  },
+  12: {
+    title: 'जिम्मेदार उपभोग एवं उत्पादन',
+    goal: 'कचरा प्रबंधन, प्लास्टिक निषेध और संसाधनों का विवेकपूर्ण उपयोग।',
+    steps: [
+      'सिंगल-यूज प्लास्टिक के विकल्पों के उपयोग का जनजागरण।',
+      'सूखे और गीले कचरे के पृथक्करण और जैविक खाद निर्माण।',
+      'स्थानीय प्राकृतिक उत्पादों के उपयोग को प्राथमिकता देना।',
+      'कचरा न्यूनीकरण और पुनर्चक्रण गतिविधियों का लेखा।',
+    ],
+    indicators: ['कचरा प्रबंधन सत्र', 'खाद निर्माण इकाइयां', 'प्लास्टिक मुक्ति अभियान'],
+  },
+  13: {
+    title: 'जलवायु परिवर्तन पर कार्यवाही',
+    goal: 'सघन देशी वृक्षारोपण और पर्यावरण चेतना से जलवायु संतुलन में योगदान।',
+    steps: [
+      'स्थानीय पारिस्थितिकी के अनुकूल देशी छायादार व फलदार पौधों का चयन।',
+      'सामुदायिक व वन क्षेत्रों में व्यापक वृक्षारोपण अभियान।',
+      'रोपे गए पौधों की सुरक्षा, खाद-पानी और जीवित रहने की दर की निगरानी।',
+      'जलवायु परिवर्तन और पर्यावरण संरक्षण पर युवा कार्यशालाएं।',
+    ],
+    indicators: ['रोपे गए पौधे', 'संरक्षित पेड़', 'सक्रिय पर्यावरण प्रहरी'],
+  },
+  14: {
+    title: 'जल के नीचे जीवन',
+    goal: 'नदियों, झरनों और प्राकृतिक जलस्रोतों को प्रदूषण मुक्त रखना।',
+    steps: [
+      'स्थानीय जल निकायों में गिरने वाले अपशिष्ट और प्लास्टिक की रोकथाम।',
+      'नदी तटों और जलप्रपातों पर स्वच्छता व जनजागरण अभियान।',
+      'जलजीवों और प्राकृतिक पारिस्थितिकी के महत्व पर संवाद।',
+      'संरक्षित किए गए जल क्षेत्रों का नियमित निरीक्षण।',
+    ],
+    indicators: ['जल स्वच्छता अभियान', 'संरक्षित जल स्रोत', 'सहभागी स्वयंसेवक'],
+  },
+  15: {
+    title: 'भूमि पर जीवन (वन एवं गौ-संरक्षण)',
+    goal: 'वनों की रक्षा, बंजर भूमि का पुनरुद्धार और पवित्र गोवंश की सेवा।',
+    steps: [
+      'खनन और बंजर भूमि पर ग्रीन बेल्ट और सघन वन विकसित करना।',
+      'निराश्रित गोवंश के लिए गौशाला संचालन और पौष्टिक आहार व्यवस्था।',
+      'अवैध कटाई रोकने के लिए वन समितियों के साथ समन्वय।',
+      'जीवित पौधों और पोषित गोवंश की नियमित स्वास्थ्य जांच।',
+    ],
+    indicators: ['संरक्षित गौवंश', 'हरित क्षेत्र विस्तार', 'जीवित पौधे'],
+  },
+  16: {
+    title: 'शांति, न्याय एवं मजबूत संस्थाएं',
+    goal: 'पारदर्शी ट्रस्टीशिप, सामाजिक समरसता और अधिकारों के प्रति जागरूकता।',
+    steps: [
+      'ग्रामीणों को उनके विधिक अधिकारों और लोक सेवाओं की सही जानकारी।',
+      'पारदर्शी दान प्रबंधन और वैधानिक ट्रस्ट नियमों का अनुपालन।',
+      'सामुदायिक शिकायतों और सुझावों के लिए खुला संवाद मंच।',
+      'सामाजिक सद्भाव और न्यायपूर्ण वातावरण का संवर्धन।',
+    ],
+    indicators: ['विधिक साक्षरता सत्र', 'पारदर्शी प्रतिवेदन', 'सुलझाए गए जन-मुद्दे'],
+  },
+  17: {
+    title: 'लक्ष्यों हेतु साझेदारी',
+    goal: 'सामाजिक संस्थाओं, शिक्षण संस्थानों और युवाओं के साथ संयुक्त सेवा।',
+    steps: [
+      'समान विचार वाले एनजीओ और युवा संगठनों के साथ समन्वय।',
+      'स्कूलों व कॉलेजों में छात्र इंटर्नशिप और वालंटियर कार्यक्रम।',
+      'संयुक्त राहत और पर्यावरण अभियानों का आयोजन।',
+      'साझेदारी के परिणामों और सामाजिक प्रभाव की समीक्षा।',
+    ],
+    indicators: ['सक्रिय साझेदारियां', 'संयुक्त अभियान', 'जुड़े हुए स्वयंसेवक'],
+  },
+};
+
+function ExecutionSteps({ steps, isHindi }) {
   return (
     <ol className="flex flex-col gap-4">
       {steps.map((step, index) => {
@@ -340,7 +616,7 @@ function ExecutionSteps({ steps }) {
 
             <div className="min-w-0 flex-1 pt-1">
               <span className="mb-1 block text-[10px] font-bold uppercase tracking-widest text-[#ea580c]">
-                Step {String(index + 1).padStart(2, '0')}
+                {isHindi ? `चरण ${String(index + 1).padStart(2, '0')}` : `Step ${String(index + 1).padStart(2, '0')}`}
               </span>
               <p className="break-words text-sm leading-relaxed text-gray-700">
                 {step}
@@ -353,8 +629,14 @@ function ExecutionSteps({ steps }) {
   );
 }
 
-function SdgCard({ sdg }) {
+function SdgCard({ sdg, isHindi }) {
   const SdgIcon = sdg.icon;
+  const hi = sdgPlansHiMap[sdg.id];
+
+  const title = isHindi && hi ? hi.title : sdg.title;
+  const goal = isHindi && hi ? hi.goal : sdg.goal;
+  const steps = isHindi && hi ? hi.steps : sdg.steps;
+  const indicators = isHindi && hi ? hi.indicators : sdg.indicators;
 
   return (
     <article className="flex h-full w-full min-w-0 flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white text-left shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
@@ -368,10 +650,10 @@ function SdgCard({ sdg }) {
 
         <div className="min-w-0 flex-1">
           <p className="mb-1 text-xs font-bold uppercase tracking-widest text-white/85">
-            Sustainable Development Goal {sdg.id}
+            {isHindi ? `सतत विकास लक्ष्य ${sdg.id}` : `Sustainable Development Goal ${sdg.id}`}
           </p>
           <h3 className="break-words font-serif text-xl font-bold leading-snug">
-            {sdg.title}
+            {title}
           </h3>
         </div>
       </div>
@@ -380,29 +662,29 @@ function SdgCard({ sdg }) {
         <div>
           <h4 className="mb-2 flex items-center gap-2 font-bold text-gray-900">
             <Target className="h-4 w-4 shrink-0 text-[#0b5e34]" />
-            Our Goal
+            {isHindi ? 'हमारा संकल्प' : 'Our Goal'}
           </h4>
           <p className="break-words text-sm leading-relaxed text-gray-600">
-            {sdg.goal}
+            {goal}
           </p>
         </div>
 
         <div className="border-t border-gray-100 pt-5">
           <h4 className="mb-4 flex items-center gap-2 font-bold text-[#0b5e34]">
             <ClipboardList className="h-4 w-4 shrink-0" />
-            How We Execute
+            {isHindi ? 'हमारी क्रियान्वयन पद्धति' : 'How We Execute'}
           </h4>
-          <ExecutionSteps steps={sdg.steps} />
+          <ExecutionSteps steps={steps} isHindi={isHindi} />
         </div>
 
         <div className="mt-auto rounded-xl border border-green-200 bg-green-50 p-4">
           <h4 className="mb-3 flex items-center gap-2 font-bold text-[#0b5e34]">
             <BarChart3 className="h-4 w-4 shrink-0" />
-            Success Indicators
+            {isHindi ? 'सफलता के संकेतक' : 'Success Indicators'}
           </h4>
 
           <div className="flex flex-wrap gap-2">
-            {sdg.indicators.map((indicator) => (
+            {indicators.map((indicator) => (
               <span
                 key={indicator}
                 className="break-words rounded-lg border border-green-200 bg-white px-2.5 py-1.5 text-xs font-medium leading-relaxed text-gray-700"
@@ -413,8 +695,9 @@ function SdgCard({ sdg }) {
           </div>
 
           <p className="mt-3 text-xs leading-relaxed text-gray-500">
-            Proposed indicators. Report actual results only after activities
-            are measured and verified.
+            {isHindi
+              ? 'प्रस्तावित संकेतक। संस्थागत अभिलेखों और सत्यापित माप के बाद ही वास्तविक परिणाम प्रकाशित किए जाते हैं।'
+              : 'Proposed indicators. Report actual results only after activities are measured and verified.'}
           </p>
         </div>
       </div>
@@ -423,17 +706,26 @@ function SdgCard({ sdg }) {
 }
 
 export default function How() {
+  const { isHindi } = useLanguage();
   const [activeTab, setActiveTab] = useState('all');
   const [sdgFilter, setSdgFilter] = useState('all');
   const { openDonateModal } = useModal();
 
-  const tabs = [
-    { id: 'all', label: 'All Programs' },
-    { id: 'coal-mining', label: 'Coal Mining' },
-    { id: 'rural-development', label: 'Rural Development' },
-    { id: 'women-empowerment', label: 'Women Empowerment' },
-    { id: 'handicap-empowerment', label: 'Handicap Empowerment' },
-  ];
+  const tabs = isHindi
+    ? [
+        { id: 'all', label: 'सभी कार्यक्रम' },
+        { id: 'coal-mining', label: 'कोयला खनन क्षेत्र' },
+        { id: 'rural-development', label: 'ग्रामीण विकास' },
+        { id: 'women-empowerment', label: 'महिला सशक्तिकरण' },
+        { id: 'handicap-empowerment', label: 'दिव्यांगजन कल्याण' },
+      ]
+    : [
+        { id: 'all', label: 'All Programs' },
+        { id: 'coal-mining', label: 'Coal Mining' },
+        { id: 'rural-development', label: 'Rural Development' },
+        { id: 'women-empowerment', label: 'Women Empowerment' },
+        { id: 'handicap-empowerment', label: 'Handicap Empowerment' },
+      ];
 
   const filteredPrograms =
     activeTab === 'all'
@@ -451,23 +743,23 @@ export default function How() {
       <section className="relative flex w-full min-w-0 items-center justify-center overflow-hidden border-b-4 border-[#ea580c] bg-gradient-to-br from-[#0b5e34] via-[#094b2a] to-[#15803d] px-4 py-10 text-center text-white shadow-md sm:px-6 sm:py-12 lg:px-8">
         <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col items-center justify-center gap-3 text-center">
           <span className="inline-flex max-w-full items-center justify-center rounded-full border border-orange-400/35 bg-orange-500/20 px-3.5 py-1 text-center text-xs font-bold uppercase tracking-wider text-orange-200">
-            Participation &amp; Program Tabs
+            {isHindi ? 'सहभागिता एवं कार्यक्रम' : 'Participation & Program Tabs'}
           </span>
 
           <h1 className="m-0 w-full text-center font-serif text-3xl font-black leading-tight tracking-tight text-white sm:text-4xl lg:text-5xl">
-            How You Can Help &amp; How We Execute
+            {isHindi ? 'सहयोग मार्ग एवं क्रियान्वयन पद्धति' : 'How You Can Help & How We Execute'}
           </h1>
 
           <p className="m-0 w-full text-center font-serif text-lg font-bold leading-relaxed text-amber-300 sm:text-xl">
-            सहयोग मार्ग: विभिन्न कार्य-स्तंभों में सहभागिता
+            {isHindi ? 'सहयोग मार्ग: विभिन्न कार्य-स्तंभों में सहभागिता' : 'सहयोग मार्ग: विभिन्न कार्य-स्तंभों में सहभागिता'}
           </p>
 
           <div className="my-1 h-1 w-20 rounded-full bg-gradient-to-r from-[#ea580c] via-white to-[#22c55e]" />
 
           <p className="m-0 mx-auto w-full max-w-3xl text-center text-sm leading-relaxed text-emerald-100/90 sm:text-base">
-            Discover each specialized development vertical and find out how
-            you can contribute through donations, volunteering, or
-            organizational partnerships.
+            {isHindi
+              ? 'प्रत्येक विकास स्तंभ को जानें और समझें कि आप दान, स्वयंसेवा या संस्थागत साझेदारी के माध्यम से कैसे योगदान दे सकते हैं।'
+              : 'Discover each specialized development vertical and find out how you can contribute through donations, volunteering, or organizational partnerships.'}
           </p>
         </div>
       </section>
@@ -502,7 +794,15 @@ export default function How() {
           }`}
         >
           {filteredPrograms.map((program) => {
-            const plan = executionPlans[program.id] || defaultExecutionPlan;
+            const hi = programTranslationsHi[program.id];
+            const title = isHindi && hi ? hi.title : program.title;
+            const subtitle = isHindi && hi ? hi.subtitle : program.subtitle;
+            const description = isHindi && hi ? hi.description : program.description;
+            const sdgBadges = isHindi && hi ? hi.sdgBadges : program.sdgBadges;
+            const pillars = isHindi && hi ? hi.pillars : program.pillars;
+            const plan = isHindi
+              ? (executionPlansHi[program.id] || defaultExecutionPlanHi)
+              : (executionPlans[program.id] || defaultExecutionPlan);
 
             return (
               <article
@@ -514,26 +814,26 @@ export default function How() {
                 <div className="min-w-0 space-y-4 p-5 sm:p-7">
                   <div>
                     <h2 className="mb-1 break-words font-serif text-xl font-bold leading-snug text-gray-900 sm:text-2xl">
-                      {program.title}
+                      {title}
                     </h2>
 
                     <p className="mb-3 break-words text-sm font-bold text-[#ea580c]">
-                      {program.subtitle}
+                      {subtitle}
                     </p>
 
                     <p className="break-words text-sm leading-relaxed text-gray-600">
-                      {program.description}
+                      {description}
                     </p>
                   </div>
 
-                  {program.sdgBadges?.length > 0 && (
+                  {sdgBadges?.length > 0 && (
                     <div>
                       <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-gray-500">
-                        Related SDGs
+                        {isHindi ? 'संबंधित एसडीजी लक्ष्य' : 'Related SDGs'}
                       </h3>
 
                       <div className="flex flex-wrap gap-2">
-                        {program.sdgBadges.map((badge) => (
+                        {sdgBadges.map((badge) => (
                           <span
                             key={badge}
                             className="rounded-lg border border-green-200 bg-green-50 px-2.5 py-1.5 text-xs font-bold text-[#0b5e34]"
@@ -547,11 +847,11 @@ export default function How() {
 
                   <div>
                     <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-gray-500">
-                      Key Pillars of Intervention
+                      {isHindi ? 'कार्यक्षेत्र के मुख्य स्तंभ' : 'Key Pillars of Intervention'}
                     </h3>
 
                     <div className="flex flex-wrap gap-2">
-                      {program.pillars.map((pillar, index) => (
+                      {pillars.map((pillar, index) => (
                         <span
                           key={`${program.id}-pillar-${index}`}
                           className="break-words rounded-lg border border-green-200 bg-green-50 px-2.5 py-1.5 text-xs font-bold text-[#0b5e34]"
@@ -571,22 +871,22 @@ export default function How() {
 
                     <div className="min-w-0">
                       <h3 className="font-serif text-lg font-bold text-[#0b5e34]">
-                        How We Execute
+                        {isHindi ? 'हमारी क्रियान्वयन पद्धति' : 'How We Execute'}
                       </h3>
                       <p className="text-xs text-gray-500">
-                        Our implementation approach
+                        {isHindi ? 'धरातलीय कार्यप्रणाली' : 'Our implementation approach'}
                       </p>
                     </div>
                   </div>
 
-                  <ExecutionSteps steps={plan.steps} />
+                  <ExecutionSteps steps={plan.steps} isHindi={isHindi} />
                 </div>
 
                 <div className="mt-auto min-w-0 space-y-4 p-5 sm:p-7">
                   <div className="rounded-xl border border-green-200 bg-green-50 p-4">
                     <h3 className="mb-2 flex items-center gap-2 font-bold text-[#0b5e34]">
                       <CheckCircle2 className="h-5 w-5 shrink-0" />
-                      Expected Outcomes
+                      {isHindi ? 'अपेक्षित परिणाम' : 'Expected Outcomes'}
                     </h3>
 
                     <p className="break-words text-sm leading-relaxed text-gray-700">
@@ -596,7 +896,7 @@ export default function How() {
 
                   <div className="flex flex-wrap items-center justify-between gap-3 border-t border-gray-100 pt-4">
                     <p className="text-xs text-gray-500">
-                      Support community-led development.
+                      {isHindi ? 'सामुदायिक सेवा और विकास में भागीदार बनें।' : 'Support community-led development.'}
                     </p>
 
                     <button
@@ -605,7 +905,7 @@ export default function How() {
                       className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#0b5e34] px-4 py-2.5 text-xs font-bold text-white shadow-sm transition-colors hover:bg-[#073d22] focus:outline-none focus:ring-2 focus:ring-[#15803d] focus:ring-offset-2"
                     >
                       <Heart className="h-4 w-4 fill-rose-300 text-rose-300" />
-                      <span>Support This Program</span>
+                      <span>{isHindi ? 'इस कार्यक्रम में सहयोग करें' : 'Support This Program'}</span>
                       <ArrowRight className="h-3.5 w-3.5" />
                     </button>
                   </div>
@@ -626,23 +926,23 @@ export default function How() {
           <div className="mx-auto mb-10 flex w-full max-w-4xl flex-col items-center text-center">
             <span className="inline-flex max-w-full items-center justify-center gap-2 rounded-full border border-green-200 bg-green-50 px-4 py-1.5 text-center text-xs font-bold uppercase tracking-wider text-[#0b5e34]">
               <Globe className="h-4 w-4 shrink-0" />
-              Sustainable Development Framework
+              {isHindi ? 'सतत विकास रूपरेखा' : 'Sustainable Development Framework'}
             </span>
 
             <h2 className="mt-5 w-full text-center font-serif text-3xl font-black leading-tight text-gray-900 sm:text-4xl lg:text-5xl">
-              Our SDG Action Plan
+              {isHindi ? 'हमारा एसडीजी एक्शन प्लान' : 'Our SDG Action Plan'}
             </h2>
 
             <p className="mt-3 w-full text-center font-serif text-lg font-bold text-[#0b5e34] sm:text-xl">
-              From Global Goals to Local Action
+              {isHindi ? 'वैश्विक लक्ष्यों से स्थानीय धरातलीय कार्य तक' : 'From Global Goals to Local Action'}
             </p>
 
             <div className="mx-auto my-4 h-1 w-20 rounded-full bg-gradient-to-r from-[#ea580c] via-white to-[#22c55e]" />
 
             <p className="mx-auto w-full max-w-3xl text-center text-sm leading-relaxed text-gray-600 sm:text-base">
-              Explore how Prithviwasi proposes to contribute to all 17
-              Sustainable Development Goals through community engagement,
-              partnerships, practical activities and measurable progress.
+              {isHindi
+                ? 'जानें कि कैसे पृथ्वीवासी संस्था सामुदायिक सहभागिता, साझेदारी, व्यावहारिक सेवा और प्रत्यक्ष माप के माध्यम से सभी १७ सतत विकास लक्ष्यों में योगदान दे रही है।'
+                : 'Explore how Prithviwasi proposes to contribute to all 17 Sustainable Development Goals through community engagement, partnerships, practical activities and measurable progress.'}
             </p>
           </div>
 
@@ -658,7 +958,7 @@ export default function How() {
                   : 'border-gray-200 bg-white text-gray-700 hover:bg-green-50'
               }`}
             >
-              All 17 Goals
+              {isHindi ? 'सभी १७ लक्ष्य' : 'All 17 Goals'}
             </button>
 
             {sdgPlans.map((sdg) => (
@@ -686,17 +986,17 @@ export default function How() {
           <div className="mx-auto mb-6 flex w-full max-w-6xl flex-wrap items-center justify-center gap-2 text-center">
             <p className="text-sm font-semibold text-gray-700">
               {sdgFilter === 'all'
-                ? 'All 17 Sustainable Development Goals'
-                : `SDG ${sdgFilter}: ${
-                    sdgPlans.find(
-                      (sdg) => sdg.id === Number(sdgFilter)
-                    )?.title || ''
-                  }`}
+                ? (isHindi ? 'सभी १७ सतत विकास लक्ष्य' : 'All 17 Sustainable Development Goals')
+                : (isHindi
+                    ? `एसडीजी ${sdgFilter}: ${sdgPlansHiMap[Number(sdgFilter)]?.title || ''}`
+                    : `SDG ${sdgFilter}: ${
+                        sdgPlans.find((sdg) => sdg.id === Number(sdgFilter))?.title || ''
+                      }`)}
             </p>
 
             <span className="text-xs text-gray-500">
               ({visibleSdgs.length}{' '}
-              {visibleSdgs.length === 1 ? 'goal' : 'goals'})
+              {isHindi ? 'लक्ष्य' : (visibleSdgs.length === 1 ? 'goal' : 'goals')})
             </span>
           </div>
 
@@ -715,7 +1015,7 @@ export default function How() {
                   visibleSdgs.length === 1 ? 'mx-auto max-w-xl' : ''
                 }`}
               >
-                <SdgCard sdg={sdg} />
+                <SdgCard sdg={sdg} isHindi={isHindi} />
               </div>
             ))}
           </div>
@@ -727,14 +1027,13 @@ export default function How() {
 
               <div className="min-w-0">
                 <h3 className="mb-2 font-serif text-lg font-bold text-gray-900">
-                  Commitment to Transparent Impact
+                  {isHindi ? 'पारदर्शी एवं सत्यनिष्ठ प्रभाव के प्रति प्रतिबद्धता' : 'Commitment to Transparent Impact'}
                 </h3>
 
                 <p className="text-sm leading-relaxed text-gray-700">
-                  These are proposed implementation approaches and indicators.
-                  Actual activities, beneficiary counts, partnerships and
-                  outcomes should be published only when supported by
-                  organizational records and verified measurements.
+                  {isHindi
+                    ? 'यह हमारी प्रस्तावित कार्यप्रणाली और संकेतक हैं। वास्तविक गतिविधियां, लाभार्थी संख्या और परिणाम संस्थागत अभिलेखों तथा सत्यापित माप के आधार पर ही प्रस्तुत किए जाते हैं।'
+                    : 'These are proposed implementation approaches and indicators. Actual activities, beneficiary counts, partnerships and outcomes should be published only when supported by organizational records and verified measurements.'}
                 </p>
               </div>
             </div>
