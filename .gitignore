@@ -31,3 +31,24 @@ style.css
 assets_backup/
 redundant_files/
 
+# Local PHP & temporary test files
+composer*
+vendor/
+php.ini
+*.pdf
+test-php-db.php
+server/
+assets/sdg-*
+
+# Environment configurations with sensitive credentials
+.env
+.env.*
+server/.env
+server/.env.*
+api/.env
+api/.env.*
+!.env.example
+!server/.env.example
+node_modules/
+dist/
+server/private/

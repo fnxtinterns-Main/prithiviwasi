@@ -36,7 +36,11 @@ export default function ShareButtons({
   };
 
   const handlePrint = () => {
-    window.print();
+    if (pledgeRecord?.id) {
+      window.open(`/api/certificate.php?registration_id=${encodeURIComponent(pledgeRecord.id)}`, '_blank');
+    } else {
+      window.print();
+    }
   };
 
   // Social URLs

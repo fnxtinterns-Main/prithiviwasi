@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 export default function SectionHeading({
@@ -9,33 +10,42 @@ export default function SectionHeading({
   light = false,
 }) {
   const alignClass =
-    align === 'left' ? 'text-left items-start' : align === 'right' ? 'text-right items-end' : 'text-center items-center';
+    align === 'left'
+      ? 'items-start text-left'
+      : align === 'right'
+        ? 'items-end text-right'
+        : 'items-center text-center';
 
   return (
-    <div className={`flex flex-col ${alignClass} mb-8 sm:mb-10 max-w-3xl mx-auto ${className}`}>
+    <div
+      className={`mx-auto mb-8 flex w-full max-w-none flex-col ${alignClass} sm:mb-10 ${className}`}
+    >
       {badge && (
-        <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-orange-50 text-[#ea580c] border border-orange-200/80 mb-2.5 shadow-2xs">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#ea580c] animate-pulse"></span>
+        <span className="mb-2.5 inline-flex items-center gap-1.5 rounded-full border border-orange-200/80 bg-orange-50 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-[#ea580c] shadow-sm">
+          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#ea580c]" />
           {badge}
         </span>
       )}
+
       <h2
-        className={`text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight font-serif ${
+        className={`w-full whitespace-normal break-words text-center font-serif text-2xl font-black leading-tight tracking-tight sm:text-3xl lg:text-4xl ${
           light ? 'text-white' : 'text-[#0b5e34]'
-        } leading-tight`}
+        }`}
       >
         {title}
       </h2>
+
       {subtitle && (
         <p
-          className={`mt-2.5 text-sm sm:text-base ${
+          className={`mx-auto mt-2.5 w-full whitespace-normal break-words text-center text-sm leading-relaxed sm:text-base ${
             light ? 'text-emerald-100/90' : 'text-gray-600'
-          } leading-relaxed`}
+          }`}
         >
           {subtitle}
         </p>
       )}
-      <div className="w-20 h-1 bg-gradient-to-r from-[#ea580c] via-amber-200 to-[#0b5e34] rounded-full mt-3.5"></div>
+
+      <div className="mt-3.5 h-1 w-20 rounded-full bg-gradient-to-r from-[#ea580c] via-amber-200 to-[#0b5e34]" />
     </div>
   );
 }

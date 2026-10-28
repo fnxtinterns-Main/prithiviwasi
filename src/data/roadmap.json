@@ -220,28 +220,30 @@
       "हजारों नए स्वयंसेवकों का पृथ्वी रक्षक दल से जुड़ाव"
     ]
   },
-  {
-    "year": 2026,
-    "title": "Establishing 100 Self-Sustaining Green Model Villages",
-    "titleHi": "१०० आदर्श स्वावलंबी हरित ग्राम (इको-विलेज) का निर्माण",
-    "status": "planned",
-    "category": "Vision 2030 Roadmap",
-    "categoryHi": "आगामी संकल्प",
-    "image": "",
-    "imagePlaceholder": "Model Eco-Village Blueprint",
-    "descHindi": "सौर ऊर्जा, वर्षा जल संचयन, शून्य-प्लास्टिक नीति और प्राकृतिक जैविक कृषि से युक्त १०० आदर्श स्वावलंबी गांवों की स्थापना का महा-संकल्प।",
-    "descEnglish": "Ambitious initiative to build 100 self-reliant green villages equipped with decentralized solar power, rainwater harvesting, zero-single-use-plastic, and organic cow-based agriculture.",
-    "highlights": [
-      "100 Model Eco-Villages powered by renewable energy and water catchment",
-      "Livelihood micro-enterprises and bamboo crafting clusters for rural women",
-      "Community organic fertilizer and zero-chemical soil rejuvenation centers"
-    ],
-    "highlightsHi": [
-      "१०० गांवों में सौर ऊर्जा व जल संचयन की व्यवस्था",
-      "ग्रामीण महिलाओं के लिए सूक्ष्म उद्योग व आजीविका केंद्र",
-      "पूर्णतः जैविक खेती व गौ-आधारित ग्राम विकास मॉडल"
-    ]
-  },
+ 
+{
+  "year": 2026,
+  "title": "Establishing 100 Self-Sustaining Green Model Villages",
+  "titleHi": "१०० आदर्श स्वावलंबी हरित ग्राम (इको-विलेज) का निर्माण",
+  "status": "planned",
+  "category": "Vision 2030 Roadmap",
+  "categoryHi": "आगामी संकल्प",
+  "image": "/assets/green-model-village.png.jpeg",
+  "imagePlaceholder": "Model Eco-Village Blueprint",
+  "descHindi": "सौर ऊर्जा, वर्षा जल संचयन, शून्य-प्लास्टिक नीति और प्राकृतिक जैविक कृषि से युक्त १०० आदर्श स्वावलंबी गांवों की स्थापना का महा-संकल्प।",
+  "descEnglish": "Ambitious initiative to build 100 self-reliant green villages equipped with decentralized solar power, rainwater harvesting, zero-single-use-plastic, and organic cow-based agriculture.",
+  "highlights": [
+    "100 Model Eco-Villages powered by renewable energy and water catchment",
+    "Livelihood micro-enterprises and bamboo crafting clusters for rural women",
+    "Community organic fertilizer and zero-chemical soil rejuvenation centers"
+  ],
+  "highlightsHi": [
+    "१०० गांवों में सौर ऊर्जा व जल संचयन की व्यवस्था",
+    "ग्रामीण महिलाओं के लिए सूक्ष्म उद्योग व आजीविका केंद्र",
+    "पूर्णतः जैविक खेती व गौ-आधारित ग्राम विकास मॉडल"
+  ]
+},
+
   {
     "year": 2028,
     "title": "Siksha on Trees: Residential Nature Gurukul Campus",
@@ -249,7 +251,7 @@
     "status": "planned",
     "category": "Vision 2030 Roadmap",
     "categoryHi": "आगामी संकल्प",
-    "image": "",
+    "image": "/assets/nature-gurukul-campus.png.png.png",
     "imagePlaceholder": "Nature Gurukul Blueprint",
     "descHindi": "वनवासी व वंचित बच्चों के लिए प्रकृति की गोद में स्थित आधुनिक व वैदिक शिक्षा से युक्त पूर्णतः निःशुल्क आवासीय गुरुकुल परिसर का निर्माण।",
     "descEnglish": "Constructing an expansive nature-integrated residential Gurukul campus providing 100% free quality modern education, ecological sciences, and ancient cultural wisdom to forest-dwelling children.",
@@ -271,7 +273,7 @@
     "status": "planned",
     "category": "Vision 2030 Roadmap",
     "categoryHi": "आगामी संकल्प",
-    "image": "",
+    "image": "/assets/sdg-2030-vision-map.png.png",
     "imagePlaceholder": "SDG-2030 Vision Map",
     "descHindi": "शून्य भुखमरी, उत्तम स्वास्थ्य, गुणवत्तापूर्ण शिक्षा, लैंगिक समानता और जलवायु संतुलन के साथ संयुक्त राष्ट्र SDG लक्ष्यों को झारखण्ड की धरती पर साकार करना।",
     "descEnglish": "Translating the UN Sustainable Development Goals (SDG 2030) into ground reality across Jharkhand—zero hunger, good health, inclusive education, gender equality, and thriving bio-shields.",

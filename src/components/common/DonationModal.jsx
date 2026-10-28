@@ -9,17 +9,22 @@ export default function DonationModal() {
 
   useEffect(() => {
     if (isDonateModalOpen) {
+      const originalHtmlOverflow = document.documentElement.style.overflow;
+      const originalBodyOverflow = document.body.style.overflow;
+
+      document.documentElement.style.overflow = 'hidden';
       document.body.style.overflow = 'hidden';
+
       const handleKeyDown = (e) => {
         if (e.key === 'Escape') closeDonateModal();
       };
       window.addEventListener('keydown', handleKeyDown);
+
       return () => {
-        document.body.style.overflow = '';
+        document.documentElement.style.overflow = originalHtmlOverflow;
+        document.body.style.overflow = originalBodyOverflow;
         window.removeEventListener('keydown', handleKeyDown);
       };
-    } else {
-      document.body.style.overflow = '';
     }
   }, [isDonateModalOpen, closeDonateModal]);
 
@@ -35,7 +40,7 @@ export default function DonationModal() {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 overflow-hidden p-3 sm:p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-200 flex items-center justify-center overscroll-contain"
       onClick={(e) => {
         if (e.target === e.currentTarget) closeDonateModal();
       }}
@@ -43,12 +48,12 @@ export default function DonationModal() {
       aria-modal="true"
       aria-labelledby="donation-modal-title"
     >
-      <div className="relative w-full max-w-xl bg-white rounded-2xl shadow-2xl overflow-hidden border border-emerald-100 animate-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-xl bg-white rounded-2xl shadow-2xl overflow-hidden border border-emerald-100 animate-in zoom-in-95 duration-200 my-auto flex flex-col max-h-[calc(100vh-2rem)] sm:max-h-[92vh] overscroll-contain">
         {/* Modal Header */}
-        <div className="bg-gradient-to-r from-[#0b5e34] via-[#094b2a] to-[#0b5e34] text-white p-6 relative border-b-4 border-b-[#ea580c]">
+        <div className="bg-gradient-to-r from-[#0b5e34] via-[#094b2a] to-[#0b5e34] text-white p-5 sm:p-6 relative border-b-4 border-b-[#ea580c] shrink-0">
           <button
             onClick={closeDonateModal}
-            className="absolute top-4 right-4 p-2 text-white/80 hover:text-white hover:bg-white/10 rounded-full transition-colors cursor-pointer"
+            className="absolute top-3.5 right-3.5 sm:top-4 sm:right-4 p-2 text-white/80 hover:text-white hover:bg-white/10 rounded-full transition-colors cursor-pointer"
             aria-label="Close modal"
           >
             <X className="w-5 h-5" />
@@ -70,7 +75,7 @@ export default function DonationModal() {
         </div>
 
         {/* Modal Body */}
-        <div className="p-6 max-h-[75vh] overflow-y-auto space-y-6">
+        <div className="p-5 sm:p-6 flex-1 overflow-y-auto space-y-6 overscroll-contain">
           {/* Quick Amount Selector */}
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">
@@ -179,7 +184,7 @@ export default function DonationModal() {
         </div>
 
         {/* Modal Footer */}
-        <div className="bg-gray-50 p-4 border-t border-gray-200 flex items-center justify-between">
+        <div className="bg-gray-50 p-3.5 sm:p-4 border-t border-gray-200 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-1.5 text-xs text-gray-500">
             <Shield className="w-4 h-4 text-emerald-600" />
             <span>100% Transparent Trust Operations</span>

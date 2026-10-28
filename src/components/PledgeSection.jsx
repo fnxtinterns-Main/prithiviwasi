@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import PledgeForm from './PledgeForm';
 import ShareButtons from './common/ShareButtons';
 import { PLEDGE_DATA } from '../data/pledgeData';
-import { sendPledgeEmail } from '../services/emailService';
+import { sendPledgeEmail, resendPledgeEmail } from '../services/emailService';
 import { Mail, CheckCircle2, RefreshCw, Send, ShieldCheck, Sparkles } from 'lucide-react';
 
 /**

@@ -1,314 +1,605 @@
-import React, { useState } from 'react';
+
+import React, { useState, useRef, useEffect } from 'react';
 import roadmapData from '../../data/roadmap.json';
 import { useLanguage } from '../../context/LanguageContext';
-import { Calendar, CheckCircle2, Clock, Sparkles, X, ZoomIn, HeartHandshake, Layers } from 'lucide-react';
+import {
+  CheckCircle2,
+  Clock,
+  Sparkles,
+  X,
+  ZoomIn,
+  HeartHandshake,
+  Layers,
+  ChevronLeft,
+  ChevronRight,
+  Calendar,
+} from 'lucide-react';
 
 export default function Roadmap() {
   const { isHindi } = useLanguage();
+
   const [selectedYear, setSelectedYear] = useState('all');
-  const [activeStatus, setActiveStatus] = useState('all'); // 'all' | 'done' | 'planned'
+  const [activeStatus, setActiveStatus] = useState('all');
   const [activeModalImage, setActiveModalImage] = useState(null);
   const [showFullGridModal, setShowFullGridModal] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [selectedNavigationYear, setSelectedNavigationYear] = useState('all');
 
-  const filteredItems = roadmapData.filter((item) => {
-    if (selectedYear !== 'all' && item.year.toString() !== selectedYear) return false;
-    if (activeStatus === 'done' && item.status !== 'done') return false;
-    if (activeStatus === 'planned' && item.status !== 'planned') return false;
+  const carouselRef = useRef(null);
+  const cardRefs = useRef({});
+
+  const sortedItems = [...roadmapData].sort((a, b) => a.year - b.year);
+
+  const filteredItems = sortedItems.filter((item) => {
+    if (selectedYear !== 'all' && String(item.year) !== selectedYear) {
+      return false;
+    }
+
+    if (activeStatus === 'done' && item.status !== 'done') {
+      return false;
+    }
+
+    if (activeStatus === 'planned' && item.status !== 'planned') {
+      return false;
+    }
+
     return true;
   });
 
-  const allYears = ['all', ...roadmapData.map((d) => d.year.toString())];
+  const availableYears = [...new Set(sortedItems.map((item) => item.year))];
+
+  useEffect(() => {
+    setCurrentIndex(0);
+
+    if (carouselRef.current) {
+      carouselRef.current.scrollTo({
+        left: 0,
+        behavior: 'smooth',
+      });
+    }
+  }, [activeStatus, selectedYear]);
+
+  const scrollToIndex = (index) => {
+    if (!carouselRef.current || filteredItems.length === 0) return;
+
+    const safeIndex = Math.max(
+      0,
+      Math.min(index, filteredItems.length - 1)
+    );
+
+    const item = filteredItems[safeIndex];
+    const card = cardRefs.current[item?.year];
+
+    if (!card) return;
+
+    setCurrentIndex(safeIndex);
+
+    carouselRef.current.scrollTo({
+      left: card.offsetLeft - carouselRef.current.offsetLeft,
+      behavior: 'smooth',
+    });
+
+    setSelectedNavigationYear(String(item.year));
+  };
+
+  const scrollRoadmap = (direction) => {
+    scrollToIndex(currentIndex + direction);
+  };
+
+  const goToYear = (year) => {
+    setSelectedNavigationYear(year);
+
+    if (year === 'all') {
+      setSelectedYear('all');
+      setCurrentIndex(0);
+
+      carouselRef.current?.scrollTo({
+        left: 0,
+        behavior: 'smooth',
+      });
+
+      return;
+    }
+
+    const targetYear = Number(year);
+    const targetIndex = filteredItems.findIndex(
+      (item) => item.year === targetYear
+    );
+
+    if (targetIndex !== -1) {
+      scrollToIndex(targetIndex);
+      return;
+    }
+
+    // If the selected year is hidden by a status filter,
+    // reset the status filter so the requested year can be shown.
+    const targetItem = sortedItems.find(
+      (item) => item.year === targetYear
+    );
+
+    if (targetItem) {
+      setActiveStatus('all');
+      setSelectedYear('all');
+
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          const card = cardRefs.current[targetYear];
+
+          if (card && carouselRef.current) {
+            setCurrentIndex(
+              sortedItems.findIndex((item) => item.year === targetYear)
+            );
+
+            carouselRef.current.scrollTo({
+              left: card.offsetLeft - carouselRef.current.offsetLeft,
+              behavior: 'smooth',
+            });
+          }
+        });
+      });
+    }
+  };
+
+  const openImageModal = (item, title) => {
+    if (!item.image) return;
+
+    setActiveModalImage({
+      url: item.image,
+      title,
+      descHindi: item.descHindi || item.desc || '',
+      descEnglish:
+        item.descEnglish || item.descEn || item.descHindi || '',
+      year: item.year,
+    });
+  };
+
+  const getTitle = (item) =>
+    isHindi
+      ? item.titleHi || item.title
+      : item.title || item.titleHi;
+
+  const getCategory = (item) =>
+    isHindi
+      ? item.categoryHi || item.category
+      : item.category || item.categoryHi;
+
+  const getHighlights = (item) =>
+    isHindi
+      ? item.highlightsHi || item.highlights
+      : item.highlights || item.highlightsHi;
+
+  const renderRoadmapCard = (item) => {
+    const isDone = item.status === 'done';
+    const title = getTitle(item);
+    const category = getCategory(item);
+    const highlightsList = getHighlights(item) || [];
+
+    return (
+      <article
+        key={item.year}
+        ref={(node) => {
+          if (node) {
+            cardRefs.current[item.year] = node;
+          }
+        }}
+        className="group flex w-[300px] shrink-0 cursor-pointer flex-col justify-between rounded-3xl border border-gray-200/90 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-emerald-400 hover:shadow-xl sm:w-[360px] sm:p-7 lg:w-[420px]"
+        onClick={() => openImageModal(item, title)}
+      >
+        <div>
+          <div className="mb-3 flex items-start justify-between gap-2">
+            <div className="flex min-w-0 flex-wrap items-center gap-2">
+              <span className="shrink-0 rounded-lg bg-[#0b5e34] px-3 py-1 text-xs font-black tracking-wide text-white">
+                {item.year}
+              </span>
+
+              <span className="rounded-full border border-orange-200 bg-orange-50 px-2.5 py-1 text-[10px] font-bold text-[#ea580c] sm:text-[11px]">
+                {category}
+              </span>
+            </div>
+
+            <span
+              className={`inline-flex shrink-0 items-center gap-1 rounded-full border px-2 py-1 text-[10px] font-bold ${
+                isDone
+                  ? 'border-emerald-200 bg-emerald-50 text-[#0b5e34]'
+                  : 'border-amber-200 bg-amber-50 text-amber-800'
+              }`}
+            >
+              {isDone ? (
+                <CheckCircle2 className="h-3 w-3 text-emerald-600" />
+              ) : (
+                <Clock className="h-3 w-3 text-amber-600" />
+              )}
+
+              {isDone
+                ? isHindi
+                  ? 'सम्पन्न'
+                  : 'Completed'
+                : isHindi
+                  ? 'संकल्प'
+                  : 'Planned'}
+            </span>
+          </div>
+
+          <h3 className="mb-3 line-clamp-2 font-serif text-base font-bold leading-snug text-gray-900 transition-colors group-hover:text-[#0b5e34] sm:text-lg">
+            {title}
+          </h3>
+
+          <div className="mb-4 rounded-r-2xl border-l-4 border-[#0b5e34] bg-[#f4f9f6] p-3.5 shadow-sm">
+            <div className="mb-2 flex items-start gap-2">
+              <span className="shrink-0 rounded bg-emerald-200/60 px-1.5 py-0.5 text-[10px] font-extrabold text-emerald-900">
+                हिंदी
+              </span>
+
+              <p className="line-clamp-3 font-serif text-xs font-medium leading-relaxed text-gray-900 sm:text-sm">
+                "{item.descHindi || item.desc}"
+              </p>
+            </div>
+
+            <div className="flex items-start gap-2 border-t border-emerald-200/60 pt-2">
+              <span className="shrink-0 rounded bg-orange-100 px-1.5 py-0.5 text-[10px] font-extrabold text-[#ea580c]">
+                ENG
+              </span>
+
+              <p className="line-clamp-3 text-xs italic leading-relaxed text-gray-700">
+                "{item.descEnglish || item.descEn || item.descHindi}"
+              </p>
+            </div>
+          </div>
+
+          <div
+            className={`relative mb-4 aspect-[16/10] w-full overflow-hidden rounded-2xl border border-gray-200 bg-gray-50 ${
+              item.image ? 'hover:shadow-md' : 'border-dashed'
+            }`}
+          >
+            {item.image ? (
+              <>
+                <img
+                  src={item.image}
+                  alt={title}
+                  loading="lazy"
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+
+                <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 transition-opacity group-hover:opacity-100">
+                  <span className="flex items-center gap-1.5 rounded-full bg-white/95 px-3 py-1.5 text-xs font-bold text-gray-900 shadow-md">
+                    <ZoomIn className="h-3.5 w-3.5 text-[#0b5e34]" />
+                    {isHindi ? 'बड़ी तस्वीर देखें' : 'View Full Image'}
+                  </span>
+                </div>
+              </>
+            ) : (
+              <div className="flex h-full flex-col items-center justify-center p-4 text-center">
+                <div className="mb-1 flex h-10 w-10 items-center justify-center rounded-full bg-emerald-50 text-[#0b5e34]">
+                  <Sparkles className="h-5 w-5" />
+                </div>
+
+                <span className="block text-xs font-bold text-gray-800">
+                  {item.imagePlaceholder || `${item.year} Upcoming Target`}
+                </span>
+
+                <span className="mt-1 block text-[10px] font-medium text-gray-500">
+                  {isHindi
+                    ? 'आगामी लक्ष्य हेतु कार्य योजना तैयार'
+                    : 'Action plan configured'}
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {highlightsList.length > 0 && (
+          <div className="mt-2 border-t border-gray-100 pt-3">
+            <h4 className="mb-1.5 text-[11px] font-bold uppercase tracking-wider text-gray-500">
+              {isHindi ? 'मुख्य उपलब्धियां' : 'Key Outcomes'}
+            </h4>
+
+            <ul className="space-y-1 text-xs text-gray-700">
+              {highlightsList.slice(0, 2).map((highlight, index) => (
+                <li key={index} className="flex items-start gap-2">
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#ea580c]" />
+                  <span className="line-clamp-1 leading-normal">
+                    {highlight}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </article>
+    );
+  };
 
   return (
-    <section className="py-20 sm:py-28 bg-white border-b border-gray-100 overflow-hidden" id="roadmap">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-10 sm:mb-14">
-        {/* Section Header with Bilingual Sensitivity and Balanced Centered Spacing */}
-        <div className="text-center max-w-4xl mx-auto mb-10">
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-orange-50 text-[#ea580c] border border-orange-200 shadow-2xs mb-3">
-            <HeartHandshake className="w-4 h-4 text-[#ea580c]" />
+    <section
+      className="overflow-hidden border-b border-gray-100 bg-white py-20 sm:py-28"
+      id="roadmap"
+    >
+      <div className="mx-auto mb-10 max-w-7xl px-4 sm:mb-14 sm:px-6 lg:px-8">
+        <div className="mx-auto mb-10 max-w-4xl text-center">
+          <span className="mb-3 inline-flex items-center gap-2 rounded-full border border-orange-200 bg-orange-50 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-[#ea580c] shadow-sm">
+            <HeartHandshake className="h-4 w-4 text-[#ea580c]" />
+
             <span>
               {isHindi
                 ? 'खंड ग • सेवा यात्रा एवं कालक्रम (२००६ → २०३०)'
-                : 'Section C • Moving Service Timeline (2006 → 2030)'}
+                : 'Section C • Service Timeline (2006 → 2030)'}
             </span>
           </span>
 
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-gray-900 tracking-tight leading-tight font-serif">
+          <h2 className="font-serif text-3xl font-black leading-tight tracking-tight text-gray-900 sm:text-4xl lg:text-5xl">
             {isHindi
               ? 'हमारी विकास यात्रा: २००६ से अब तक एवं २०३० का लक्ष्य'
               : 'Our Journey: Completed Milestones & 2030 Vision'}
           </h2>
 
-          <p className="mt-3 text-gray-600 text-sm sm:text-base leading-relaxed max-w-2xl mx-auto">
+          <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-gray-600 sm:text-base">
             {isHindi
-              ? 'विगत दो दशकों में धरातल पर हुए ऐतिहासिक सेवा कार्य। किसी भी कार्ड पर कर्सर ले जाएं—यात्रा तुरंत रुक जाएगी।'
-              : 'Chronological progression of our grassroots milestones across two decades. Hover over any card to pause movement and inspect in detail.'}
+              ? 'अपनी सुविधा के अनुसार वर्ष चुनें या तीरों से सेवा यात्रा के कार्ड आगे-पीछे देखें।'
+              : 'Choose a specific year or use the arrows to navigate through our service milestones.'}
           </p>
 
-          {/* Controls & Grid View Button Row */}
-          <div className="flex flex-wrap items-center justify-center gap-3 mt-6">
-            <div className="inline-flex p-1 bg-gray-100 rounded-2xl border border-gray-200/80">
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+            <div className="inline-flex flex-wrap items-center justify-center gap-1 rounded-2xl border border-gray-200/80 bg-gray-100 p-1">
               <button
+                type="button"
                 onClick={() => setActiveStatus('all')}
-                className={`px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+                className={`cursor-pointer rounded-xl px-3.5 py-2 text-xs font-bold transition-all sm:text-sm ${
                   activeStatus === 'all'
-                    ? 'bg-[#0b5e34] text-white shadow-xs'
+                    ? 'bg-[#0b5e34] text-white shadow-sm'
                     : 'text-gray-700 hover:text-gray-900'
                 }`}
               >
                 {isHindi ? 'समस्त कार्य' : 'All Milestones'}
               </button>
+
               <button
+                type="button"
                 onClick={() => setActiveStatus('done')}
-                className={`px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                className={`flex cursor-pointer items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-bold transition-all sm:text-sm ${
                   activeStatus === 'done'
-                    ? 'bg-[#0b5e34] text-white shadow-xs'
+                    ? 'bg-[#0b5e34] text-white shadow-sm'
                     : 'text-gray-700 hover:text-gray-900'
                 }`}
               >
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-                <span>{isHindi ? 'सम्पन्न (2006–2024)' : 'Completed'}</span>
+                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+                {isHindi ? 'सम्पन्न' : 'Completed'}
               </button>
+
               <button
+                type="button"
                 onClick={() => setActiveStatus('planned')}
-                className={`px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                className={`flex cursor-pointer items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-bold transition-all sm:text-sm ${
                   activeStatus === 'planned'
-                    ? 'bg-[#ea580c] text-white shadow-xs'
+                    ? 'bg-[#ea580c] text-white shadow-sm'
                     : 'text-gray-700 hover:text-gray-900'
                 }`}
               >
-                <Clock className="w-3.5 h-3.5 text-amber-500" />
-                <span>{isHindi ? 'आगामी (2026–2030)' : 'Planned Targets'}</span>
+                <Clock className="h-3.5 w-3.5 text-amber-500" />
+                {isHindi ? 'आगामी योजनाएं' : 'Planned Targets'}
               </button>
             </div>
 
-            {/* Button to open full grid view */}
             <button
+              type="button"
               onClick={() => setShowFullGridModal(true)}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white hover:bg-emerald-50 text-[#0b5e34] font-bold text-xs sm:text-sm border border-emerald-300 shadow-2xs hover:shadow-sm transition-all cursor-pointer"
+              className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl border border-emerald-300 bg-white px-4 py-2 text-xs font-bold text-[#0b5e34] shadow-sm transition-all hover:bg-emerald-50 hover:shadow-md sm:text-sm"
             >
-              <Layers className="w-4 h-4 text-[#ea580c]" />
-              <span>{isHindi ? 'ग्रिड में सभी देखें ↗' : 'Browse All Grid View ↗'}</span>
+              <Layers className="h-4 w-4 text-[#ea580c]" />
+              {isHindi ? 'ग्रिड में सभी देखें ↗' : 'Browse All Grid View ↗'}
             </button>
           </div>
         </div>
       </div>
 
-      {/* CONTINUOUS MOVING ROADMAP ROW (ONE ROW, HOVER TO PAUSE) */}
-      <div className="relative w-full py-6 overflow-hidden group">
-        {/* Left & Right Edge Gradient Vignettes */}
-        <div className="absolute left-0 top-0 bottom-0 w-16 sm:w-28 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
-        <div className="absolute right-0 top-0 bottom-0 w-16 sm:w-28 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
+      {/* MANUAL YEAR SELECTOR AND PREVIOUS/NEXT CONTROLS */}
+      <div className="mx-auto mb-4 flex max-w-7xl flex-wrap items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+        <label className="flex items-center gap-2 text-sm font-bold text-gray-700">
+          <Calendar className="h-4 w-4 text-[#0b5e34]" />
 
-        <div className="animate-roadmap-marquee flex items-stretch gap-6 px-4">
-          {/* Duplicate array twice for seamless continuous loop */}
-          {[...filteredItems, ...filteredItems].map((item, index) => {
-            const isDone = item.status === 'done';
-            const title = isHindi ? item.titleHi || item.title : item.title || item.titleHi;
-            const category = isHindi ? item.categoryHi || item.category : item.category || item.categoryHi;
-            const highlightsList = isHindi ? item.highlightsHi || item.highlights : item.highlights || item.highlightsHi;
+          <span>{isHindi ? 'सीधे वर्ष चुनें' : 'Jump to year'}</span>
 
-            return (
-              <div
-                key={`${item.year}-${index}`}
-                onClick={() =>
-                  item.image &&
-                  setActiveModalImage({
-                    url: item.image,
-                    title: title,
-                    descHindi: item.descHindi || item.desc,
-                    descEnglish: item.descEnglish || item.descEn || item.descHindi,
-                    year: item.year,
-                  })
-                }
-                className="w-[360px] sm:w-[420px] shrink-0 bg-white rounded-3xl p-6 sm:p-7 border border-gray-200/90 shadow-2xs hover:shadow-2xl hover:border-emerald-400 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between cursor-pointer"
-              >
-                <div>
-                  {/* Top Badges: Year & Category & Status */}
-                  <div className="flex items-center justify-between gap-2 mb-3">
-                    <div className="flex items-center gap-2">
-                      <span className="px-3 py-1 bg-[#0b5e34] text-white text-xs font-black rounded-lg shadow-2xs tracking-wide">
-                        {item.year}
-                      </span>
-                      <span className="text-[11px] font-bold text-[#ea580c] bg-orange-50 px-2.5 py-0.5 rounded-full border border-orange-200">
-                        {category}
-                      </span>
-                    </div>
+          <select
+            value={selectedNavigationYear}
+            onChange={(event) => goToYear(event.target.value)}
+            className="max-w-[150px] rounded-xl border border-gray-300 bg-white px-3 py-2 text-sm font-bold text-[#0b5e34] outline-none focus:ring-2 focus:ring-emerald-500"
+          >
+            <option value="all">
+              {isHindi ? 'शुरुआत से' : 'Start'}
+            </option>
 
-                    <span
-                      className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold shadow-2xs ${
-                        isDone
-                          ? 'bg-emerald-50 text-[#0b5e34] border border-emerald-200'
-                          : 'bg-amber-50 text-amber-800 border border-amber-200'
-                      }`}
-                    >
-                      {isDone ? <CheckCircle2 className="w-3 h-3 text-emerald-600" /> : <Clock className="w-3 h-3 text-amber-600" />}
-                      <span>{isDone ? (isHindi ? 'सम्पन्न' : 'Completed') : (isHindi ? 'संकल्प' : 'Planned')}</span>
-                    </span>
-                  </div>
+            {availableYears.map((year) => (
+              <option key={year} value={String(year)}>
+                {year}
+              </option>
+            ))}
+          </select>
+        </label>
 
-                  {/* Title */}
-                  <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-3 leading-snug group-hover:text-[#0b5e34] transition-colors font-serif line-clamp-2">
-                    {title}
-                  </h3>
+        <div className="flex items-center gap-3">
+          <span className="text-xs font-medium text-gray-500 sm:text-sm">
+            {filteredItems.length
+              ? `${currentIndex + 1} / ${filteredItems.length}`
+              : '0 / 0'}
+          </span>
 
-                  {/* 
-                    HIGHLIGHTED PART IN BOTH HINDI AND ENGLISH / USE
-                    As requested: "The highlighted part will be in hindi and english / use"
-                  */}
-                  <div className="bg-[#f4f9f6] border-l-4 border-[#0b5e34] p-3.5 rounded-r-2xl mb-4 shadow-2xs">
-                    {/* Hindi Quote Section */}
-                    <div className="flex items-start gap-2 mb-2">
-                      <span className="text-[10px] font-extrabold uppercase tracking-wide text-emerald-900 bg-emerald-200/60 px-1.5 py-0.5 rounded shrink-0">
-                        हिंदी
-                      </span>
-                      <p className="text-gray-900 text-xs sm:text-sm font-medium leading-relaxed font-serif line-clamp-3">
-                        "{item.descHindi || item.desc}"
-                      </p>
-                    </div>
+          <button
+            type="button"
+            aria-label="Previous roadmap card"
+            title={isHindi ? 'पिछला वर्ष' : 'Previous'}
+            disabled={currentIndex <= 0 || filteredItems.length === 0}
+            onClick={() => scrollRoadmap(-1)}
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-emerald-200 bg-white text-[#0b5e34] shadow-sm transition hover:bg-emerald-50 disabled:cursor-not-allowed disabled:opacity-35"
+          >
+            <ChevronLeft className="h-6 w-6" />
+          </button>
 
-                    {/* English Translation Section */}
-                    <div className="pt-2 border-t border-emerald-200/60 flex items-start gap-2">
-                      <span className="text-[10px] font-extrabold uppercase tracking-wide text-[#ea580c] bg-orange-100 px-1.5 py-0.5 rounded shrink-0">
-                        ENG
-                      </span>
-                      <p className="text-gray-700 text-xs leading-relaxed italic line-clamp-3">
-                        "{item.descEnglish || item.descEn || item.descHindi}"
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Real Photo Container with zoom effect & Click-to-Expand */}
-                  <div
-                    className={`relative w-full aspect-[16/10] rounded-2xl overflow-hidden mb-4 bg-gray-50 border border-gray-200 transition-all ${
-                      item.image ? 'hover:shadow-md' : 'border-dashed border-gray-300'
-                    }`}
-                  >
-                    {item.image ? (
-                      <>
-                        <img
-                          src={item.image}
-                          alt={title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
-                        <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                          <span className="px-3 py-1.5 rounded-full bg-white/95 text-gray-900 text-xs font-bold shadow-md flex items-center gap-1.5 backdrop-blur-xs">
-                            <ZoomIn className="w-3.5 h-3.5 text-[#0b5e34]" />
-                            <span>{isHindi ? 'बड़ी तस्वीर देखें' : 'View Full Image'}</span>
-                          </span>
-                        </div>
-                      </>
-                    ) : (
-                      <div className="h-full flex flex-col items-center justify-center p-4 text-center">
-                        <div className="w-10 h-10 rounded-full bg-emerald-50 text-[#0b5e34] flex items-center justify-center mb-1 shadow-2xs">
-                          <Sparkles className="w-5 h-5" />
-                        </div>
-                        <span className="text-xs font-bold text-gray-800 block">
-                          {item.imagePlaceholder || `${item.year} Upcoming Target`}
-                        </span>
-                        <span className="text-[10px] text-gray-500 font-medium block mt-0.5">
-                          {isHindi ? 'आगामी लक्ष्य हेतु कार्य योजना तैयार' : 'Action plan configured'}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Key Highlights / Outcomes */}
-                {highlightsList && highlightsList.length > 0 && (
-                  <div className="pt-3 border-t border-gray-100 mt-2">
-                    <h4 className="text-[11px] font-bold uppercase tracking-wider text-gray-500 mb-1.5">
-                      {isHindi ? 'मुख्य उपलब्धियां' : 'Key Outcomes'}
-                    </h4>
-                    <ul className="space-y-1 text-xs text-gray-700">
-                      {highlightsList.slice(0, 2).map((h, hIdx) => (
-                        <li key={hIdx} className="flex items-start gap-2">
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#ea580c] shrink-0 mt-1.5" />
-                          <span className="leading-normal line-clamp-1">{h}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-            );
-          })}
+          <button
+            type="button"
+            aria-label="Next roadmap card"
+            title={isHindi ? 'अगला वर्ष' : 'Next'}
+            disabled={
+              currentIndex >= filteredItems.length - 1 ||
+              filteredItems.length === 0
+            }
+            onClick={() => scrollRoadmap(1)}
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-emerald-200 bg-white text-[#0b5e34] shadow-sm transition hover:bg-emerald-50 disabled:cursor-not-allowed disabled:opacity-35"
+          >
+            <ChevronRight className="h-6 w-6" />
+          </button>
         </div>
       </div>
 
-      {/* FULL GRID MODAL (BROWSE ALL MILESTONES) */}
+      {/* HORIZONTAL CAROUSEL: ONLY THIS CONTAINER SCROLLS */}
+      <div className="relative w-full py-4">
+        <div
+          ref={carouselRef}
+          className="w-full overflow-x-auto overflow-y-hidden scroll-smooth"
+          style={{ scrollbarWidth: 'thin', overscrollBehaviorX: 'contain' }}
+          onScroll={() => {
+            if (!carouselRef.current || filteredItems.length === 0) return;
+
+            const containerLeft = carouselRef.current.getBoundingClientRect().left;
+            const cards = filteredItems
+              .map((item, index) => ({
+                index,
+                year: item.year,
+                element: cardRefs.current[item.year],
+              }))
+              .filter((entry) => entry.element);
+
+            if (cards.length === 0) return;
+
+            let nearest = cards[0];
+            let nearestDistance = Infinity;
+
+            cards.forEach((entry) => {
+              const distance = Math.abs(
+                entry.element.getBoundingClientRect().left - containerLeft
+              );
+
+              if (distance < nearestDistance) {
+                nearestDistance = distance;
+                nearest = entry;
+              }
+            });
+
+            setCurrentIndex(nearest.index);
+            setSelectedNavigationYear(String(nearest.year));
+          }}
+        >
+          <div className="flex w-max items-stretch gap-5 px-4 pb-5 sm:gap-6 sm:px-6 lg:px-8">
+            {filteredItems.map((item) => renderRoadmapCard(item))}
+          </div>
+        </div>
+      </div>
+
+      {/* FULL GRID MODAL */}
       {showFullGridModal && (
         <div
-          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm sm:p-6"
           onClick={() => setShowFullGridModal(false)}
         >
           <div
-            className="bg-white rounded-3xl max-w-5xl w-full overflow-hidden shadow-2xl relative max-h-[90vh] flex flex-col"
-            onClick={(e) => e.stopPropagation()}
+            className="relative flex max-h-[90vh] w-full max-w-5xl flex-col overflow-hidden rounded-3xl bg-white shadow-2xl"
+            onClick={(event) => event.stopPropagation()}
           >
-            <div className="p-5 border-b border-gray-100 flex items-center justify-between bg-[#fcfdfc] shrink-0">
+            <div className="flex shrink-0 items-center justify-between border-b border-gray-100 bg-[#fcfdfc] p-5">
               <div>
-                <h3 className="text-xl font-black text-gray-900 font-serif">
-                  {isHindi ? 'समस्त विकास यात्रा मील के पत्थर (2006–2030)' : 'Complete Journey Milestones (2006–2030)'}
+                <h3 className="font-serif text-lg font-black text-gray-900 sm:text-xl">
+                  {isHindi
+                    ? 'समस्त विकास यात्रा मील के पत्थर (2006–2030)'
+                    : 'Complete Journey Milestones (2006–2030)'}
                 </h3>
-                <p className="text-xs text-gray-600 mt-0.5">
-                  {isHindi ? 'सभी ऐतिहासिक वर्ष व आगामी योजनाएं' : 'All historical years and future vision'}
+
+                <p className="mt-0.5 text-xs text-gray-600">
+                  {isHindi
+                    ? 'सभी ऐतिहासिक वर्ष व आगामी योजनाएं'
+                    : 'All historical years and future vision'}
                 </p>
               </div>
+
               <button
+                type="button"
+                aria-label="Close grid"
                 onClick={() => setShowFullGridModal(false)}
-                className="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 flex items-center justify-center transition-colors cursor-pointer"
+                className="flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-full bg-gray-100 text-gray-600 transition-colors hover:bg-gray-200"
               >
-                <X className="w-5 h-5" />
+                <X className="h-5 w-5" />
               </button>
             </div>
 
-            <div className="p-6 overflow-y-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {roadmapData.map((item) => {
+            <div className="grid grid-cols-1 gap-6 overflow-y-auto p-5 sm:p-6 md:grid-cols-2 lg:grid-cols-3">
+              {sortedItems.map((item) => {
                 const isDone = item.status === 'done';
-                const title = isHindi ? item.titleHi || item.title : item.title || item.titleHi;
-                const category = isHindi ? item.categoryHi || item.category : item.category || item.categoryHi;
+                const title = getTitle(item);
 
                 return (
-                  <div
+                  <article
                     key={item.year}
-                    onClick={() => {
-                      if (item.image) {
-                        setActiveModalImage({
-                          url: item.image,
-                          title: title,
-                          descHindi: item.descHindi || item.desc,
-                          descEnglish: item.descEnglish || item.descEn || item.descHindi,
-                          year: item.year,
-                        });
-                      }
-                    }}
-                    className="p-5 rounded-2xl bg-white border border-gray-200 shadow-2xs hover:shadow-lg transition-all cursor-pointer flex flex-col justify-between"
+                    onClick={() => openImageModal(item, title)}
+                    className="flex cursor-pointer flex-col justify-between rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:shadow-lg"
                   >
                     <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="px-2.5 py-0.5 bg-[#0b5e34] text-white text-xs font-black rounded-lg">
+                      <div className="mb-2 flex items-center justify-between gap-2">
+                        <span className="rounded-lg bg-[#0b5e34] px-2.5 py-1 text-xs font-black text-white">
                           {item.year}
                         </span>
+
                         <span
-                          className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                            isDone ? 'bg-emerald-50 text-[#0b5e34]' : 'bg-amber-50 text-amber-800'
+                          className={`rounded-full px-2 py-1 text-[10px] font-bold ${
+                            isDone
+                              ? 'bg-emerald-50 text-[#0b5e34]'
+                              : 'bg-amber-50 text-amber-800'
                           }`}
                         >
-                          {isDone ? (isHindi ? 'सम्पन्न' : 'Completed') : (isHindi ? 'संकल्प' : 'Planned')}
+                          {isDone
+                            ? isHindi
+                              ? 'सम्पन्न'
+                              : 'Completed'
+                            : isHindi
+                              ? 'संकल्प'
+                              : 'Planned'}
                         </span>
                       </div>
-                      <h4 className="font-bold text-sm text-gray-900 mb-2 font-serif line-clamp-1">{title}</h4>
-                      {item.image && (
-                        <div className="aspect-[16/10] rounded-xl overflow-hidden mb-2 bg-gray-100">
-                          <img src={item.image} alt="" className="w-full h-full object-cover" />
+
+                      <h4 className="mb-2 line-clamp-2 font-serif text-sm font-bold text-gray-900">
+                        {title}
+                      </h4>
+
+                      {item.image ? (
+                        <div className="mb-3 aspect-[16/10] overflow-hidden rounded-xl bg-gray-100">
+                          <img
+                            src={item.image}
+                            alt={title}
+                            loading="lazy"
+                            className="h-full w-full object-cover"
+                          />
+                        </div>
+                      ) : (
+                        <div className="mb-3 flex aspect-[16/10] items-center justify-center rounded-xl border border-dashed border-gray-300 bg-gray-50 p-4 text-center text-xs font-medium text-gray-500">
+                          {item.imagePlaceholder || title}
                         </div>
                       )}
-                      <p className="text-xs text-gray-600 line-clamp-2 italic">
-                        "{item.descEnglish || item.descHindi}"
+
+                      <p className="line-clamp-3 text-xs italic text-gray-600">
+                        "{item.descEnglish || item.descHindi || item.desc}"
                       </p>
                     </div>
-                  </div>
+
+                    <button
+                      type="button"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        setShowFullGridModal(false);
+                        setActiveStatus('all');
+                        setSelectedYear('all');
+                        goToYear(String(item.year));
+                      }}
+                      className="mt-3 self-start text-xs font-bold text-[#0b5e34] hover:underline"
+                    >
+                      {isHindi ? 'समयरेखा में देखें →' : 'View in timeline →'}
+                    </button>
+                  </article>
                 );
               })}
             </div>
@@ -316,58 +607,62 @@ export default function Roadmap() {
         </div>
       )}
 
-      {/* LIGHTBOX MODAL FOR SINGLE MILESTONE PHOTO */}
+      {/* SINGLE IMAGE LIGHTBOX */}
       {activeModalImage && (
         <div
-          className="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6"
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm sm:p-6"
           onClick={() => setActiveModalImage(null)}
         >
           <div
-            className="bg-white rounded-3xl max-w-3xl w-full overflow-hidden shadow-2xl relative animate-in fade-in zoom-in-95 duration-200 flex flex-col max-h-[92vh]"
-            onClick={(e) => e.stopPropagation()}
+            className="relative flex max-h-[92vh] w-full max-w-3xl flex-col overflow-hidden rounded-3xl bg-white shadow-2xl"
+            onClick={(event) => event.stopPropagation()}
           >
-            {/* Modal Header */}
-            <div className="p-4 sm:p-5 border-b border-gray-100 flex items-center justify-between bg-[#fcfdfc] shrink-0">
-              <div className="flex items-center gap-2.5">
-                <span className="px-2.5 py-1 bg-[#0b5e34] text-white text-xs font-bold rounded-lg">
+            <div className="flex shrink-0 items-center justify-between gap-3 border-b border-gray-100 bg-[#fcfdfc] p-4 sm:p-5">
+              <div className="flex min-w-0 items-center gap-2.5">
+                <span className="shrink-0 rounded-lg bg-[#0b5e34] px-2.5 py-1 text-xs font-bold text-white">
                   {activeModalImage.year}
                 </span>
-                <h3 className="text-base sm:text-lg font-bold text-gray-900 font-serif">
+
+                <h3 className="line-clamp-2 font-serif text-sm font-bold text-gray-900 sm:text-lg">
                   {activeModalImage.title}
                 </h3>
               </div>
+
               <button
+                type="button"
+                aria-label="Close image"
                 onClick={() => setActiveModalImage(null)}
-                className="w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 flex items-center justify-center transition-colors cursor-pointer"
+                className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full bg-gray-100 text-gray-600 transition-colors hover:bg-gray-200"
               >
-                <X className="w-5 h-5" />
+                <X className="h-5 w-5" />
               </button>
             </div>
 
-            {/* Modal Image */}
-            <div className="max-h-[58vh] bg-black flex items-center justify-center overflow-hidden">
+            <div className="flex max-h-[58vh] items-center justify-center overflow-hidden bg-black">
               <img
                 src={activeModalImage.url}
                 alt={activeModalImage.title}
-                className="w-full h-auto max-h-[58vh] object-contain"
+                className="h-auto max-h-[58vh] w-full object-contain"
               />
             </div>
 
-            {/* Modal Description Footer with Dual Hindi and English */}
-            <div className="p-4 sm:p-5 bg-white border-t border-gray-100 space-y-2 shrink-0">
+            <div className="shrink-0 space-y-3 overflow-y-auto border-t border-gray-100 bg-white p-4 sm:p-5">
               <div className="flex items-start gap-2">
-                <span className="text-[10px] font-bold uppercase text-emerald-800 bg-emerald-100 px-1.5 py-0.5 rounded">
+                <span className="shrink-0 rounded bg-emerald-100 px-1.5 py-0.5 text-[10px] font-bold uppercase text-emerald-800">
                   हिंदी
                 </span>
-                <p className="text-xs sm:text-sm text-gray-900 font-serif font-medium leading-relaxed">
+
+                <p className="font-serif text-xs font-medium leading-relaxed text-gray-900 sm:text-sm">
                   "{activeModalImage.descHindi}"
                 </p>
               </div>
-              <div className="flex items-start gap-2 pt-1 border-t border-gray-100">
-                <span className="text-[10px] font-bold uppercase text-orange-800 bg-orange-100 px-1.5 py-0.5 rounded">
+
+              <div className="flex items-start gap-2 border-t border-gray-100 pt-3">
+                <span className="shrink-0 rounded bg-orange-100 px-1.5 py-0.5 text-[10px] font-bold uppercase text-orange-800">
                   ENG
                 </span>
-                <p className="text-xs text-gray-600 italic leading-relaxed">
+
+                <p className="text-xs italic leading-relaxed text-gray-600 sm:text-sm">
                   "{activeModalImage.descEnglish}"
                 </p>
               </div>
