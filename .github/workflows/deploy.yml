@@ -30,7 +30,7 @@ jobs:
           if [ -d "api" ]; then cp -r api dist/; fi
           if [ -f ".htaccess" ]; then cp .htaccess dist/; fi
 
-      - name: 5a. Sync to Hostinger via FTP (prithiviwasi.org domain)
+      - name: 5a. Sync to Hostinger (Root ./)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         continue-on-error: true
         with:
@@ -38,21 +38,10 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./dist/
-          server-dir: ./domains/prithiviwasi.org/public_html/
+          server-dir: ./
           dangerous-clean-slate: false
 
-      - name: 5b. Sync to Hostinger via FTP (prithviwasi.org domain)
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        continue-on-error: true
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./dist/
-          server-dir: ./domains/prithviwasi.org/public_html/
-          dangerous-clean-slate: false
-
-      - name: 5c. Sync to Hostinger via FTP (root public_html)
+      - name: 5b. Sync to Hostinger (public_html/)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         continue-on-error: true
         with:
@@ -61,4 +50,15 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./dist/
           server-dir: ./public_html/
+          dangerous-clean-slate: false
+
+      - name: 5c. Sync to Hostinger (domains/prithiviwasi.org/public_html/)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        continue-on-error: true
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./dist/
+          server-dir: ./domains/prithiviwasi.org/public_html/
           dangerous-clean-slate: false
