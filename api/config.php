@@ -35,12 +35,17 @@ const DEFAULT_CONFIG = [
  */
 function loadProjectEnvFile(string $path): array
 {
-    if (!is_file($path) || !is_readable($path)) {
+    if (!file_exists($path)) {
+        return [];
+    }
+
+    $raw = @file_get_contents($path);
+    if ($raw === false || $raw === '') {
         return [];
     }
 
     $values = [];
-    $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) ?: [];
+    $lines = preg_split('/\r\n|\r|\n/', $raw) ?: [];
 
     foreach ($lines as $line) {
         $line = trim($line);
@@ -98,7 +103,7 @@ function projectEnv(): array
 
     $loaded = [];
     foreach ($possiblePaths as $path) {
-        if (is_file($path) && is_readable($path)) {
+        if (file_exists($path)) {
             $loaded = loadProjectEnvFile($path);
             if (!empty($loaded)) {
                 break;
