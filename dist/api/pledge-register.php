@@ -72,7 +72,6 @@ try {
         $idempotencyKey = trim((string)($input['idempotency_key'] ?? $input['idempotencyKey'] ?? ''));
     }
 
-    // Fallback idempotency key
     if ($idempotencyKey === '') {
         $idempotencyKey = 'pledge-' . substr(md5(strtolower($email)), 0, 16) . '-' . time();
     }
@@ -96,112 +95,184 @@ try {
         $language = 'hi';
     }
 
+    $year = date('Y');
+    $registrationId = sprintf('PW-%s-%05d', $year, random_int(10000, 99999));
+    $registeredAt = date('Y-m-d H:i:s');
+
     $pdo = database();
 
-    // 2. Check for duplicate request with same idempotency key
-    $find = $pdo->prepare(
-        'SELECT id, registration_id, full_name, email, language, registered_at, email_status
-         FROM pledge_registrations
-         WHERE idempotency_key = :idempotency_key
-         LIMIT 1'
-    );
-    $find->execute(['idempotency_key' => $idempotencyKey]);
-    $existing = $find->fetch(PDO::FETCH_ASSOC);
+    // 2. Database Available: Save to MySQL
+    if ($pdo instanceof PDO) {
+        $find = $pdo->prepare(
+            'SELECT id, registration_id, full_name, email, language, registered_at, email_status
+             FROM pledge_registrations
+             WHERE idempotency_key = :idempotency_key
+             LIMIT 1'
+        );
+        $find->execute(['idempotency_key' => $idempotencyKey]);
+        $existing = $find->fetch(PDO::FETCH_ASSOC);
 
-    if ($existing) {
-        $sent = ($existing['email_status'] === 'sent');
-        $displayId = function_exists('formatPrettyRegistrationId')
-            ? formatPrettyRegistrationId($existing['registration_id'], $existing['registered_at'])
-            : $existing['registration_id'];
+        if ($existing) {
+            $sent = ($existing['email_status'] === 'sent');
+            $displayId = formatPrettyRegistrationId($existing['registration_id'], $existing['registered_at']);
 
-        respond(200, [
+            respond(200, [
+                'success' => true,
+                'duplicate_request' => true,
+                'duplicateRequest' => true,
+                'email_sent' => $sent,
+                'emailSent' => $sent,
+                'message' => 'This pledge is already registered.',
+                'registration' => [
+                    'id' => $displayId,
+                    'name' => $existing['full_name'],
+                    'email' => $existing['email'],
+                    'language' => $existing['language'],
+                    'registered_at' => $existing['registered_at'],
+                    'timestamp' => $existing['registered_at'],
+                    'emailStatus' => $existing['email_status']
+                ]
+            ]);
+        }
+
+        do {
+            $registrationId = sprintf('PW-%s-%05d', $year, random_int(10000, 99999));
+            $check = $pdo->prepare('SELECT id FROM pledge_registrations WHERE registration_id = :reg_id LIMIT 1');
+            $check->execute(['reg_id' => $registrationId]);
+        } while ($check->fetchColumn());
+
+        $insert = $pdo->prepare(
+            'INSERT INTO pledge_registrations
+                (registration_id, idempotency_key, full_name, email, language, email_status)
+             VALUES
+                (:registration_id, :idempotency_key, :full_name, :email, :language, "pending")'
+        );
+
+        try {
+            $insert->execute([
+                'registration_id' => $registrationId,
+                'idempotency_key' => $idempotencyKey,
+                'full_name' => $name,
+                'email' => $email,
+                'language' => $language
+            ]);
+        } catch (PDOException $e) {
+            if ($e->getCode() === '23000') {
+                $find->execute(['idempotency_key' => $idempotencyKey]);
+                $existing = $find->fetch(PDO::FETCH_ASSOC);
+                if ($existing) {
+                    $sent = ($existing['email_status'] === 'sent');
+                    respond(200, [
+                        'success' => true,
+                        'duplicate_request' => true,
+                        'duplicateRequest' => true,
+                        'email_sent' => $sent,
+                        'emailSent' => $sent,
+                        'message' => 'This request was already registered.',
+                        'registration' => [
+                            'id' => $existing['registration_id'],
+                            'name' => $existing['full_name'],
+                            'email' => $existing['email'],
+                            'language' => $existing['language'],
+                            'registered_at' => $existing['registered_at'],
+                            'timestamp' => $existing['registered_at'],
+                            'emailStatus' => $existing['email_status']
+                        ]
+                    ]);
+                }
+            }
+            throw $e;
+        }
+
+        $find->execute(['idempotency_key' => $idempotencyKey]);
+        $registration = $find->fetch(PDO::FETCH_ASSOC);
+
+        if (!$registration) {
+            $registration = [
+                'registration_id' => $registrationId,
+                'full_name' => $name,
+                'email' => $email,
+                'language' => $language,
+                'registered_at' => $registeredAt,
+                'email_status' => 'pending'
+            ];
+        }
+
+        // Send welcome email
+        $emailSent = sendPledgeWelcomeEmail($pdo, $registration);
+
+        $find->execute(['idempotency_key' => $idempotencyKey]);
+        $registration = $find->fetch(PDO::FETCH_ASSOC) ?: $registration;
+
+        respond(201, [
             'success' => true,
-            'duplicate_request' => true,
-            'duplicateRequest' => true,
-            'email_sent' => $sent,
-            'emailSent' => $sent,
-            'message' => 'This pledge is already registered.',
+            'duplicate_request' => false,
+            'duplicateRequest' => false,
+            'email_sent' => $emailSent,
+            'emailSent' => $emailSent,
+            'message' => $emailSent
+                ? 'Thank you! Your pledge is registered and a welcome certificate has been sent to your email.'
+                : 'Pledge registered successfully. (Check Hostinger Webmail password in api/config.php).',
             'registration' => [
-                'id' => $displayId,
-                'name' => $existing['full_name'],
-                'email' => $existing['email'],
-                'language' => $existing['language'],
-                'registered_at' => $existing['registered_at'],
-                'timestamp' => $existing['registered_at'],
-                'emailStatus' => $existing['email_status']
+                'id' => $registration['registration_id'],
+                'name' => $registration['full_name'],
+                'email' => $registration['email'],
+                'language' => $registration['language'],
+                'registered_at' => $registration['registered_at'],
+                'timestamp' => $registration['registered_at'],
+                'emailStatus' => $registration['email_status']
             ]
         ]);
     }
 
-    // 3. Generate pretty, official registration ID: e.g. PW-2026-84920
-    $year = date('Y');
-    do {
-        $registrationId = sprintf('PW-%s-%05d', $year, random_int(10000, 99999));
-        $check = $pdo->prepare('SELECT id FROM pledge_registrations WHERE registration_id = :reg_id LIMIT 1');
-        $check->execute(['reg_id' => $registrationId]);
-    } while ($check->fetchColumn());
+    // 3. Database Fallback (File Storage): Works instantly without MySQL provisioning
+    $dataFile = __DIR__ . '/pledges_data.json';
+    $existingData = [];
+    if (file_exists($dataFile)) {
+        $existingData = json_decode((string)file_get_contents($dataFile), true) ?: [];
+    }
 
-    // 4. Save registration in MySQL FIRST (status: pending)
-    $insert = $pdo->prepare(
-        'INSERT INTO pledge_registrations
-            (registration_id, idempotency_key, full_name, email, language, email_status)
-         VALUES
-            (:registration_id, :idempotency_key, :full_name, :email, :language, "pending")'
-    );
-
-    try {
-        $insert->execute([
-            'registration_id' => $registrationId,
-            'idempotency_key' => $idempotencyKey,
-            'full_name' => $name,
-            'email' => $email,
-            'language' => $language
-        ]);
-    } catch (PDOException $e) {
-        if ($e->getCode() === '23000') {
-            $find->execute(['idempotency_key' => $idempotencyKey]);
-            $existing = $find->fetch(PDO::FETCH_ASSOC);
-            if ($existing) {
-                $sent = ($existing['email_status'] === 'sent');
-                respond(200, [
-                    'success' => true,
-                    'duplicate_request' => true,
-                    'duplicateRequest' => true,
-                    'email_sent' => $sent,
-                    'emailSent' => $sent,
-                    'message' => 'This request was already registered.',
-                    'registration' => [
-                        'id' => $existing['registration_id'],
-                        'name' => $existing['full_name'],
-                        'email' => $existing['email'],
-                        'language' => $existing['language'],
-                        'registered_at' => $existing['registered_at'],
-                        'timestamp' => $existing['registered_at'],
-                        'emailStatus' => $existing['email_status']
-                    ]
-                ]);
-            }
+    // Check duplicate
+    foreach ($existingData as $item) {
+        if (($item['idempotency_key'] ?? '') === $idempotencyKey) {
+            $sent = ($item['email_status'] ?? '') === 'sent';
+            respond(200, [
+                'success' => true,
+                'duplicate_request' => true,
+                'duplicateRequest' => true,
+                'email_sent' => $sent,
+                'emailSent' => $sent,
+                'message' => 'This pledge is already registered.',
+                'registration' => [
+                    'id' => $item['registration_id'],
+                    'name' => $item['full_name'],
+                    'email' => $item['email'],
+                    'language' => $item['language'],
+                    'registered_at' => $item['registered_at'],
+                    'timestamp' => $item['registered_at'],
+                    'emailStatus' => $item['email_status']
+                ]
+            ]);
         }
-        throw $e;
     }
 
-    // Retrieve saved record with authoritative timestamp and auto-increment ID
-    $find->execute(['idempotency_key' => $idempotencyKey]);
-    $registration = $find->fetch(PDO::FETCH_ASSOC);
+    $registration = [
+        'registration_id' => $registrationId,
+        'idempotency_key' => $idempotencyKey,
+        'full_name' => $name,
+        'email' => $email,
+        'language' => $language,
+        'role' => $role,
+        'registered_at' => $registeredAt,
+        'email_status' => 'pending'
+    ];
 
-    if (!$registration) {
-        respond(500, [
-            'success' => false,
-            'message' => 'Registration could not be verified in database.'
-        ]);
-    }
+    // Send welcome email directly
+    $emailSent = sendPledgeWelcomeEmail(null, $registration);
+    $registration['email_status'] = $emailSent ? 'sent' : 'failed';
 
-    // 5. Send welcome email and PDF attachment automatically
-    $emailSent = sendPledgeWelcomeEmail($pdo, $registration);
-
-    // Refresh record status
-    $find->execute(['idempotency_key' => $idempotencyKey]);
-    $registration = $find->fetch(PDO::FETCH_ASSOC) ?: $registration;
+    $existingData[] = $registration;
+    @file_put_contents($dataFile, json_encode($existingData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 
     respond(201, [
         'success' => true,
@@ -210,8 +281,8 @@ try {
         'email_sent' => $emailSent,
         'emailSent' => $emailSent,
         'message' => $emailSent
-            ? 'Thank you! Your pledge is registered and a personalized certificate has been sent to your email.'
-            : 'Pledge registered successfully. (Email will be sent once SMTP credentials are confirmed).',
+            ? 'Thank you! Your pledge is registered and a welcome certificate has been sent to your email.'
+            : 'Pledge registered successfully. (Check Hostinger Webmail password in api/config.php).',
         'registration' => [
             'id' => $registration['registration_id'],
             'name' => $registration['full_name'],

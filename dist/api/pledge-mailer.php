@@ -11,7 +11,10 @@ use Dompdf\Options;
 use PHPMailer\PHPMailer\Exception as MailException;
 use PHPMailer\PHPMailer\PHPMailer;
 
-require_once dirname(__DIR__) . '/vendor/autoload.php';
+$vendorAutoload = dirname(__DIR__) . '/vendor/autoload.php';
+if (file_exists($vendorAutoload)) {
+    require_once $vendorAutoload;
+}
 require_once __DIR__ . '/config.php';
 
 /**
@@ -86,6 +89,9 @@ function getAssetBase64(string $filename): string
  */
 function generatePledgeCertificate(array $record): string
 {
+    if (!class_exists('Dompdf\\Dompdf')) {
+        return '';
+    }
     $name = pledgeMailEscape(
         trim((string) ($record['full_name'] ?? $record['name'] ?? 'Dedicated Citizen'))
     );
@@ -495,7 +501,192 @@ HTML;
  * Automatically dispatches in Hindi if language is 'hi', or English if 'en'.
  * Includes full anti-spam RFC-compliant headers for maximum inbox delivery.
  */
-function sendPledgeWelcomeEmail(PDO $pdo, array $record): bool
+
+/**
+ * Standalone RFC-compliant SMTP Socket Mailer for Hostinger / cPanel / Gmail.
+ * Operates without any external composer dependencies via pure PHP streams.
+ */
+function sendNativeSmtpMail(
+    string $smtpHost,
+    int $smtpPort,
+    string $smtpSecure,
+    string $smtpUser,
+    string $smtpPass,
+    string $fromEmail,
+    string $fromName,
+    string $toEmail,
+    string $toName,
+    string $subject,
+    string $htmlBody,
+    string $altBody = '',
+    ?string $attachmentBytes = null,
+    string $attachmentFilename = ''
+): bool {
+    $timeout = 15;
+    $prefix = ($smtpSecure === 'ssl' || $smtpPort === 465) ? 'ssl://' : '';
+
+    $socket = @stream_socket_client(
+        $prefix . $smtpHost . ':' . $smtpPort,
+        $errno,
+        $errstr,
+        $timeout,
+        STREAM_CLIENT_CONNECT
+    );
+
+    if (!$socket) {
+        error_log("Native SMTP connection failed: $errstr ($errno)");
+        return false;
+    }
+
+    stream_set_timeout($socket, $timeout);
+
+    $getResponse = function () use ($socket): string {
+        $response = '';
+        while ($line = fgets($socket, 515)) {
+            $response .= $line;
+            if (isset($line[3]) && $line[3] === ' ') {
+                break;
+            }
+        }
+        return $response;
+    };
+
+    $sendCommand = function (string $cmd) use ($socket, $getResponse): string {
+        fwrite($socket, $cmd . "\r\n");
+        return $getResponse();
+    };
+
+    $greeting = $getResponse();
+    if (!str_starts_with($greeting, '220')) {
+        fclose($socket);
+        return false;
+    }
+
+    $ehlo = $sendCommand('EHLO ' . (gethostname() ?: 'localhost'));
+
+    if ($smtpSecure === 'tls' || ($smtpPort === 587 && str_contains($ehlo, 'STARTTLS'))) {
+        $starttls = $sendCommand('STARTTLS');
+        if (str_starts_with($starttls, '220')) {
+            $crypto = @stream_socket_enable_crypto(
+                $socket,
+                true,
+                STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT | STREAM_CRYPTO_METHOD_TLSv1_3_CLIENT
+            );
+            if (!$crypto) {
+                fclose($socket);
+                return false;
+            }
+            $sendCommand('EHLO ' . (gethostname() ?: 'localhost'));
+        }
+    }
+
+    if ($smtpUser !== '' && $smtpPass !== '') {
+        $authResp = $sendCommand('AUTH LOGIN');
+        if (!str_starts_with($authResp, '334')) {
+            fclose($socket);
+            return false;
+        }
+        $userResp = $sendCommand(base64_encode($smtpUser));
+        if (!str_starts_with($userResp, '334')) {
+            fclose($socket);
+            return false;
+        }
+        $passResp = $sendCommand(base64_encode($smtpPass));
+        if (!str_starts_with($passResp, '235')) {
+            fclose($socket);
+            return false;
+        }
+    }
+
+    $mailFrom = $sendCommand("MAIL FROM: <{$fromEmail}>");
+    if (!str_starts_with($mailFrom, '250')) {
+        fclose($socket);
+        return false;
+    }
+
+    $rcptTo = $sendCommand("RCPT TO: <{$toEmail}>");
+    if (!str_starts_with($rcptTo, '250')) {
+        fclose($socket);
+        return false;
+    }
+
+    $dataCmd = $sendCommand('DATA');
+    if (!str_starts_with($dataCmd, '354')) {
+        fclose($socket);
+        return false;
+    }
+
+    $boundary = '=_pw_' . md5(uniqid((string)time(), true));
+    $encodedSubject = '=?UTF-8?B?' . base64_encode($subject) . '?=';
+    $encodedFromName = '=?UTF-8?B?' . base64_encode($fromName) . '?=';
+    $encodedToName = '=?UTF-8?B?' . base64_encode($toName) . '?=';
+
+    $headers = [];
+    $headers[] = "Date: " . date('r');
+    $headers[] = "From: {$encodedFromName} <{$fromEmail}>";
+    $headers[] = "To: {$encodedToName} <{$toEmail}>";
+    $headers[] = "Subject: {$encodedSubject}";
+    $headers[] = "MIME-Version: 1.0";
+    $headers[] = "Message-ID: <pledge." . md5(uniqid()) . "@prithviwasi.org>";
+    $headers[] = "Auto-Submitted: auto-generated";
+
+    $body = '';
+    if (!empty($attachmentBytes) && !empty($attachmentFilename)) {
+        $headers[] = "Content-Type: multipart/mixed; boundary=\"{$boundary}\"";
+        $body .= "--{$boundary}\r\n";
+        $body .= "Content-Type: text/html; charset=UTF-8\r\n";
+        $body .= "Content-Transfer-Encoding: base64\r\n\r\n";
+        $body .= chunk_split(base64_encode($htmlBody)) . "\r\n";
+        $body .= "--{$boundary}\r\n";
+        $body .= "Content-Type: application/pdf; name=\"{$attachmentFilename}\"\r\n";
+        $body .= "Content-Transfer-Encoding: base64\r\n";
+        $body .= "Content-Disposition: attachment; filename=\"{$attachmentFilename}\"\r\n\r\n";
+        $body .= chunk_split(base64_encode($attachmentBytes)) . "\r\n";
+        $body .= "--{$boundary}--\r\n";
+    } else {
+        $headers[] = "Content-Type: text/html; charset=UTF-8";
+        $headers[] = "Content-Transfer-Encoding: base64";
+        $body = chunk_split(base64_encode($htmlBody));
+    }
+
+    $fullMessage = implode("\r\n", $headers) . "\r\n\r\n" . $body . "\r\n.";
+    $sendResp = $sendCommand($fullMessage);
+    $sendCommand('QUIT');
+    fclose($socket);
+
+    return str_starts_with($sendResp, '250');
+}
+
+/**
+ * Fallback to PHP's built-in mail() function (works natively on Hostinger servers).
+ */
+function sendNativePhpMail(
+    string $fromEmail,
+    string $fromName,
+    string $toEmail,
+    string $subject,
+    string $htmlBody
+): bool {
+    $encodedSubject = '=?UTF-8?B?' . base64_encode($subject) . '?=';
+    $encodedFromName = '=?UTF-8?B?' . base64_encode($fromName) . '?=';
+
+    $headers = [
+        'MIME-Version: 1.0',
+        'Content-Type: text/html; charset=UTF-8',
+        'Content-Transfer-Encoding: base64',
+        "From: {$encodedFromName} <{$fromEmail}>",
+        "Reply-To: {$fromEmail}",
+        'X-Mailer: PHP/' . phpversion()
+    ];
+
+    return @mail($toEmail, $encodedSubject, chunk_split(base64_encode($htmlBody)), implode("\r\n", $headers));
+}
+
+/**
+ * Send the welcome email and update registration status.
+ * Supports PHPMailer (if present), Direct SMTP Socket, and Hostinger native mail().
+ */
+function sendPledgeWelcomeEmail(?PDO $pdo, array $record): bool
 {
     $recordId = (int) ($record['id'] ?? 0);
     $regUuid = (string) ($record['registration_id'] ?? '');
@@ -505,127 +696,130 @@ function sendPledgeWelcomeEmail(PDO $pdo, array $record): bool
     $name = trim((string) ($record['full_name'] ?? ''));
     $language = strtolower(trim((string) ($record['language'] ?? 'hi')));
 
-    if (
-        (empty($recordId) && empty($regUuid)) ||
-        $name === '' ||
-        !filter_var($email, FILTER_VALIDATE_EMAIL)
-    ) {
+    if ($name === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
         error_log('Pledge mailer: invalid registration data.');
         return false;
     }
 
-    $smtpHost = projectEnvValue('SMTP_HOST', 'smtp.gmail.com');
+    $smtpHost = projectEnvValue('SMTP_HOST', 'smtp.hostinger.com');
     $smtpPort = (int) projectEnvValue('SMTP_PORT', '465');
     $smtpSecure = strtolower(projectEnvValue('SMTP_SECURE', 'ssl'));
-    
-    $smtpUsername = projectEnvValue('SMTP_USER', projectEnvValue('SMTP_USERNAME', 'tiwarisachin9886@gmail.com'));
-    $smtpPassword = projectEnvValue('SMTP_PASS', projectEnvValue('SMTP_PASSWORD', ''));
-    
-    $fromEmail = projectEnvValue(
-        'MAIL_FROM',
-        projectEnvValue('SMTP_FROM_EMAIL', $smtpUsername)
-    );
-    $fromName = projectEnvValue(
-        'MAIL_FROM_NAME',
-        projectEnvValue('SMTP_FROM_NAME', 'PRITHVIWASI - Prithviwasi Seva Aur Sudhar Sangathan')
-    );
-    $replyTo = projectEnvValue('ORG_CONTACT_EMAIL', 'contact@prithviwasi.org');
+    $smtpUsername = projectEnvValue('SMTP_USER', 'contact@prithviwasi.org');
+    $smtpPassword = projectEnvValue('SMTP_PASS', '');
+    $fromEmail = projectEnvValue('MAIL_FROM', $smtpUsername);
+    $fromName = projectEnvValue('MAIL_FROM_NAME', 'PRITHVIWASI - Prithviwasi Seva Aur Sudhar Sangathan');
 
-    if (
-        $smtpHost === '' ||
-        $smtpUsername === '' ||
-        $smtpPassword === '' ||
-        !filter_var($fromEmail, FILTER_VALIDATE_EMAIL) ||
-        $smtpPort < 1 ||
-        $smtpPort > 65535
-    ) {
-        $error = 'SMTP configuration is missing or invalid.';
-        updatePledgeEmailStatus($pdo, $idToUpdate, 'failed', $error);
-        error_log('Pledge mailer: ' . $error);
-        return false;
+    $regDate = (string) ($record['registered_at'] ?? date('Y-m-d H:i:s'));
+    $prettyRegId = formatPrettyRegistrationId($regUuid, $regDate);
+    $safeId = preg_replace('/[^A-Za-z0-9_-]/', '_', $prettyRegId);
+
+    if ($language === 'hi') {
+        $subject = 'पर्यावरण संरक्षण प्रतिज्ञा में शामिल होने के लिए धन्यवाद | पृथ्वीवासी परिवार में आपका स्वागत है';
+        $htmlBody = buildPledgeWelcomeBodyHindi($name, $prettyRegId, $regDate);
+        $altBody = buildPledgeWelcomeAltBodyHindi($name, $prettyRegId, $regDate);
+    } else {
+        $subject = 'Thank You for Taking the Pledge | Welcome to PRITHVIWASI';
+        $htmlBody = buildPledgeWelcomeBodyEnglish($name, $prettyRegId, $regDate);
+        $altBody = buildPledgeWelcomeAltBodyEnglish($name, $prettyRegId, $regDate);
     }
 
-    $mail = new PHPMailer(true);
-
-    try {
-        $mail->isSMTP();
-        $mail->Host = $smtpHost;
-        $mail->Port = $smtpPort;
-        $mail->SMTPAuth = true;
-        $mail->Username = $smtpUsername;
-        $mail->Password = $smtpPassword;
-        $mail->Timeout = 20;
-        $mail->CharSet = 'UTF-8';
-        $mail->Encoding = 'base64';
-
-        if ($smtpSecure === 'ssl' || $smtpPort === 465) {
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-        } elseif ($smtpSecure === 'tls' || $smtpPort === 587) {
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        } else {
-            $mail->SMTPSecure = '';
-            $mail->SMTPAutoTLS = false;
+    $attachmentBytes = null;
+    $attachmentFilename = 'PRITHVIWASI_Pledge_Certificate_' . $safeId . '.pdf';
+    if (class_exists('Dompdf\\Dompdf')) {
+        try {
+            $attachmentBytes = generatePledgeCertificate($record);
+        } catch (Throwable $e) {
+            error_log('PDF certificate generation warning: ' . $e->getMessage());
         }
+    }
 
-        $mail->setFrom($fromEmail, $fromName);
-        $mail->addAddress($email, $name);
-        $mail->addReplyTo($replyTo, $fromName);
+    $sent = false;
 
-        $regDate = (string) ($record['registered_at'] ?? date('Y-m-d H:i:s'));
-        $prettyRegId = formatPrettyRegistrationId($regUuid, $regDate);
-        $safeId = preg_replace('/[^A-Za-z0-9_-]/', '_', $prettyRegId);
-
-        // Anti-Spam & Deliverability Headers
-        $mail->MessageID = sprintf('<pledge.%s.%d@prithviwasi.org>', $safeId, time());
-        $mail->addCustomHeader('Auto-Submitted', 'auto-generated');
-        $mail->addCustomHeader('X-Auto-Response-Suppress', 'OOF, AutoReply');
-        $mail->addCustomHeader('List-Unsubscribe', '<mailto:contact@prithviwasi.org?subject=unsubscribe>');
-        $mail->addCustomHeader('X-Report-Abuse-To', 'contact@prithviwasi.org');
-
-        // Language-specific Subject & Email Body
-        if ($language === 'hi') {
-            $mail->Subject = 'पर्यावरण संरक्षण प्रतिज्ञा में शामिल होने के लिए धन्यवाद | पृथ्वीवासी परिवार में आपका स्वागत है';
-            $mail->Body = buildPledgeWelcomeBodyHindi($name, $prettyRegId, $regDate);
-            $mail->AltBody = buildPledgeWelcomeAltBodyHindi($name, $prettyRegId, $regDate);
-        } else {
-            $mail->Subject = 'Thank You for Taking the Pledge | Welcome to PRITHVIWASI';
-            $mail->Body = buildPledgeWelcomeBodyEnglish($name, $prettyRegId, $regDate);
-            $mail->AltBody = buildPledgeWelcomeAltBodyEnglish($name, $prettyRegId, $regDate);
+    // 1. Try PHPMailer if vendor library exists and password provided
+    if (class_exists('PHPMailer\\PHPMailer\\PHPMailer') && $smtpPassword !== '') {
+        try {
+            $phpMailerClass = 'PHPMailer\\PHPMailer\\PHPMailer';
+            $mail = new $phpMailerClass(true);
+            $mail->isSMTP();
+            $mail->Host = $smtpHost;
+            $mail->Port = $smtpPort;
+            $mail->SMTPAuth = true;
+            $mail->Username = $smtpUsername;
+            $mail->Password = $smtpPassword;
+            $mail->Timeout = 15;
+            $mail->CharSet = 'UTF-8';
+            if ($smtpSecure === 'ssl' || $smtpPort === 465) {
+                $mail->SMTPSecure = $phpMailerClass::ENCRYPTION_SMTPS;
+            } elseif ($smtpSecure === 'tls' || $smtpPort === 587) {
+                $mail->SMTPSecure = $phpMailerClass::ENCRYPTION_STARTTLS;
+            }
+            $mail->setFrom($fromEmail, $fromName);
+            $mail->addAddress($email, $name);
+            $mail->addReplyTo($fromEmail, $fromName);
+            $mail->Subject = $subject;
+            $mail->Body = $htmlBody;
+            $mail->AltBody = $altBody;
+            $mail->isHTML(true);
+            if (!empty($attachmentBytes)) {
+                $mail->addStringAttachment($attachmentBytes, $attachmentFilename, 'base64', 'application/pdf');
+            }
+            $mail->send();
+            $sent = true;
+        } catch (Throwable $e) {
+            error_log('PHPMailer notice: ' . $e->getMessage());
         }
-        $mail->isHTML(true);
+    }
 
-        // Generate high-resolution PDF certificate matching user design
-        $pdfBytes = generatePledgeCertificate($record);
-        $filename = 'PRITHVIWASI_Pledge_Certificate_' . $safeId . '.pdf';
-
-        $mail->addStringAttachment(
-            $pdfBytes,
-            $filename,
-            'base64',
-            'application/pdf'
+    // 2. Try native socket SMTP if password is provided
+    if (!$sent && $smtpPassword !== '') {
+        $sent = sendNativeSmtpMail(
+            $smtpHost,
+            $smtpPort,
+            $smtpSecure,
+            $smtpUsername,
+            $smtpPassword,
+            $fromEmail,
+            $fromName,
+            $email,
+            $name,
+            $subject,
+            $htmlBody,
+            $altBody,
+            $attachmentBytes,
+            $attachmentFilename
         );
-
-        $mail->send();
-
-        updatePledgeEmailStatus($pdo, $idToUpdate, 'sent', null);
-        return true;
-    } catch (\Throwable $exception) {
-        $error = substr($exception->getMessage(), 0, 1000);
-        updatePledgeEmailStatus($pdo, $idToUpdate, 'failed', $error);
-        error_log('Pledge welcome email failed: ' . $error);
-        return false;
     }
+
+    // 3. Fallback to Hostinger native PHP mail()
+    if (!$sent) {
+        $sent = sendNativePhpMail(
+            $fromEmail,
+            $fromName,
+            $email,
+            $subject,
+            $htmlBody
+        );
+    }
+
+    if ($pdo instanceof PDO && !empty($idToUpdate)) {
+        updatePledgeEmailStatus($pdo, $idToUpdate, $sent ? 'sent' : 'failed', $sent ? null : 'Pending SMTP credentials');
+    }
+
+    return $sent;
 }
 
 /**
- * Update the email delivery status.
+ * Update the email delivery status in PDO database safely.
  */
 function updatePledgeEmailStatus(
-    PDO $pdo,
+    ?PDO $pdo,
     $idOrRegId,
     string $status,
     ?string $error
 ): void {
+    if (!($pdo instanceof PDO)) {
+        return;
+    }
     try {
         $stmt = $pdo->prepare(
             "UPDATE pledge_registrations
@@ -642,10 +836,11 @@ function updatePledgeEmailStatus(
             ':id_int' => is_numeric($idOrRegId) ? (int)$idOrRegId : 0,
             ':reg_id' => (string)$idOrRegId,
         ]);
-    } catch (\Throwable $exception) {
+    } catch (Throwable $exception) {
         error_log('Could not update pledge email status: ' . $exception->getMessage());
     }
 }
+
 
 /**
  * Full Hindi welcome email HTML with all 14 About points.
