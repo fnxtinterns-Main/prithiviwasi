@@ -1,0 +1,30 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # 1. API Route Rewrites to PHP scripts
+  RewriteRule ^api/pledges/?$ api/pledge-register.php [L,QSA]
+  RewriteRule ^api/pledges/resend/?$ api/pledge-mailer.php [L,QSA]
+  RewriteRule ^api/pledges/([a-zA-Z0-9._-]+)/certificate/?$ api/certificate.php?registration_id=$1 [L,QSA]
+
+  # 2. Prevent direct listing of sensitive files (.env, git, logs)
+  <FilesMatch "(^\.env|\.git|\.log)$">
+    Require all denied
+    Order allow,deny
+    Deny from all
+  </FilesMatch>
+
+  # 3. Serve real existing files and folders (HTML, CSS, JS, images)
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_FILENAME} !-l
+
+  # 4. React Single Page Application routing (all routes -> index.html)
+  RewriteRule . /index.html [L]
+</IfModule>
+
+# MIME Types and gzip compression for performance
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json image/svg+xml
+</IfModule>
