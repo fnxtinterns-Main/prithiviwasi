@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import programsData from '../data/programs.json';
 import {
   Heart,
@@ -709,7 +710,7 @@ export default function How() {
   const { isHindi } = useLanguage();
   const [activeTab, setActiveTab] = useState('all');
   const [sdgFilter, setSdgFilter] = useState('all');
-  const { openDonateModal } = useModal();
+  const navigate = useNavigate();
 
   const tabs = isHindi
     ? [
@@ -901,7 +902,7 @@ export default function How() {
 
                     <button
                       type="button"
-                      onClick={openDonateModal}
+                      onClick={() => navigate('/donate')}
                       className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#0b5e34] px-4 py-2.5 text-xs font-bold text-white shadow-sm transition-colors hover:bg-[#073d22] focus:outline-none focus:ring-2 focus:ring-[#15803d] focus:ring-offset-2"
                     >
                       <Heart className="h-4 w-4 fill-rose-300 text-rose-300" />

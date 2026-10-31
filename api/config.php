@@ -203,6 +203,25 @@ function database(): ?PDO
             // Table doesn't have idempotency_key or already modified, which is expected
         }
 
+        // Ensure donations table exists for official 80G receipts
+        $pdo->exec("
+            CREATE TABLE IF NOT EXISTS `donations` (
+                `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                `receipt_no` VARCHAR(64) NOT NULL UNIQUE,
+                `donor_name` VARCHAR(150) NOT NULL,
+                `email` VARCHAR(254) NOT NULL,
+                `phone` VARCHAR(20) NULL,
+                `pan` VARCHAR(20) NULL,
+                `amount` DECIMAL(10,2) NOT NULL,
+                `cause` VARCHAR(120) NOT NULL DEFAULT 'General Trust Welfare',
+                `utr_no` VARCHAR(100) NULL,
+                `payment_mode` VARCHAR(50) NOT NULL DEFAULT 'UPI',
+                `receipt_sent` TINYINT(1) NOT NULL DEFAULT 0,
+                `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                INDEX idx_donor_email (email)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+        ");
+
         return $pdo;
     } catch (Throwable $e) {
         error_log('Database connection notice: ' . $e->getMessage());

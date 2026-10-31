@@ -190,13 +190,13 @@ export default function Footer() {
 
             {/* Donate Button in Footer */}
             <div className="pt-2">
-              <button
-                onClick={openDonateModal}
+              <Link
+                to="/donate"
                 className="w-full py-3 px-4 bg-gradient-to-r from-[#ea580c] to-amber-600 hover:from-orange-600 hover:to-amber-500 text-white rounded-xl text-sm font-bold shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Heart className="w-4 h-4 text-rose-200 fill-rose-200" />
                 <span>Support Manav Kalyan / दान सहयोग</span>
-              </button>
+              </Link>
             </div>
           </div>
         </div>

@@ -100,27 +100,44 @@ try {
 
     // 2. Database Available: Save to MySQL
     if ($pdo instanceof PDO) {
-        // Fast duplicate check by registration_id
-        $find = $pdo->prepare(
+        // Fast duplicate check by email address: A user cannot pledge twice!
+        $findEmail = $pdo->prepare(
             'SELECT id, registration_id, full_name, email, language, registered_at, email_status
              FROM pledge_registrations
-             WHERE registration_id = :reg_id
+             WHERE email = :email
              LIMIT 1'
         );
-        $find->execute(['reg_id' => $registrationId]);
-        $existing = $find->fetch(PDO::FETCH_ASSOC);
+        $findEmail->execute(['email' => strtolower($email)]);
+        $existing = $findEmail->fetch(PDO::FETCH_ASSOC);
+
+        if (!$existing) {
+            // Also check by registration_id
+            $findReg = $pdo->prepare(
+                'SELECT id, registration_id, full_name, email, language, registered_at, email_status
+                 FROM pledge_registrations
+                 WHERE registration_id = :reg_id
+                 LIMIT 1'
+            );
+            $findReg->execute(['reg_id' => $registrationId]);
+            $existing = $findReg->fetch(PDO::FETCH_ASSOC);
+        }
 
         if ($existing) {
             $sent = ($existing['email_status'] === 'sent');
             $displayId = formatPrettyRegistrationId($existing['registration_id'], $existing['registered_at']);
+            $msg = ($language === 'hi')
+                ? 'आप इस ईमेल से पहले ही संकल्प ले चुके हैं! आपका संकल्प प्रमाण पत्र पहले ही जारी हो चुका है।'
+                : 'You have already taken the pledge with this email! Your certificate has already been issued.';
 
             respond(200, [
                 'success' => true,
+                'already_registered' => true,
+                'alreadyRegistered' => true,
                 'duplicate_request' => true,
                 'duplicateRequest' => true,
                 'email_sent' => $sent,
                 'emailSent' => $sent,
-                'message' => 'This pledge is already registered.',
+                'message' => $msg,
                 'registration' => [
                     'id' => $displayId,
                     'name' => $existing['full_name'],
@@ -226,17 +243,23 @@ try {
         $existingData = json_decode((string)file_get_contents($dataFile), true) ?: [];
     }
 
-    // Check duplicate by registration_id
+    // Check duplicate by email or registration_id
     foreach ($existingData as $item) {
-        if (($item['registration_id'] ?? '') === $registrationId) {
+        if (strcasecmp($item['email'] ?? '', $email) === 0 || ($item['registration_id'] ?? '') === $registrationId) {
             $sent = ($item['email_status'] ?? '') === 'sent';
+            $msg = ($language === 'hi')
+                ? 'आप इस ईमेल से पहले ही संकल्प ले चुके हैं! आपका संकल्प प्रमाण पत्र पहले ही जारी हो चुका है।'
+                : 'You have already taken the pledge with this email! Your certificate has already been issued.';
+
             respond(200, [
                 'success' => true,
+                'already_registered' => true,
+                'alreadyRegistered' => true,
                 'duplicate_request' => true,
                 'duplicateRequest' => true,
                 'email_sent' => $sent,
                 'emailSent' => $sent,
-                'message' => 'This pledge is already registered.',
+                'message' => $msg,
                 'registration' => [
                     'id' => $item['registration_id'],
                     'name' => $item['full_name'],

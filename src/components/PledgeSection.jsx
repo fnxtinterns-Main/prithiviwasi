@@ -208,14 +208,15 @@ export default function PledgeSection({
                 {/* Social Share Suite */}
                 <ShareButtons pledgeRecord={pledgeRecord} />
 
-                <div className="registered-card-actions mt-4">
-                  <button
-                    type="button"
-                    className="reg-action-btn reg-retake-btn"
-                    onClick={onResetPledge}
-                  >
-                    {registeredInfo.retakeBtn}
-                  </button>
+                <div className="registered-card-actions mt-4 flex items-center justify-center">
+                  <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-900/60 text-emerald-100 rounded-xl font-bold text-xs border border-emerald-400/40 shadow-inner">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                    <span>
+                      {language === 'hi'
+                        ? 'आधिकारिक पर्यावरण संरक्षण संकल्प सक्रिय (प्रत्येक नागरिक हेतु एक बार मान्य)'
+                        : 'Official Environmental Pledge Active (One pledge per citizen)'}
+                    </span>
+                  </div>
                 </div>
               </div>
             ) : (

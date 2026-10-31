@@ -85,17 +85,14 @@ export default function SuccessMessage({ pledgeRecord, language = 'en', onReset 
         {/* Comprehensive Multi-Platform Share Tools */}
         <ShareButtons pledgeRecord={pledgeRecord} />
 
-        {/* Retake / Reset Option */}
-        <div className="success-actions-row mt-3">
-          <button
-            type="button"
-            onClick={onReset}
-            className="success-btn success-btn-retake w-full"
-            id="retake-pledge-btn"
-          >
-            <span>{data.retakeBtn}</span>
-            <span aria-hidden="true">↺</span>
-          </button>
+        {/* One-Time Verified Pledge Badge */}
+        <div className="mt-3 p-2.5 bg-emerald-100/80 border border-emerald-300 rounded-xl text-center text-xs font-bold text-emerald-950 flex items-center justify-center gap-2">
+          <CheckCircle2 className="w-4 h-4 text-emerald-700" />
+          <span>
+            {language === 'hi' 
+              ? 'आधिकारिक पर्यावरण संरक्षण संकल्प सक्रिय (प्रत्येक नागरिक हेतु एक बार मान्य)' 
+              : 'Verified Environmental Pledge Active (One pledge per citizen)'}
+          </span>
         </div>
 
         <p className="success-storage-note">

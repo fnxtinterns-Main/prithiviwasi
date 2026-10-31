@@ -176,13 +176,13 @@ export default function Navbar() {
             </button>
 
             {/* Authentic NGO Green Donate CTA Button */}
-            <button
-              onClick={openDonateModal}
+            <Link
+              to="/donate"
               className="flex items-center gap-1.5 px-3.5 sm:px-5 py-2 bg-[#0b5e34] hover:bg-[#073d22] active:bg-[#052b18] text-white rounded-xl text-xs sm:text-sm font-bold shadow-xs hover:shadow-md transition-all cursor-pointer shrink-0"
             >
               <Heart className="w-4 h-4 text-rose-300 fill-rose-300" />
               <span>{isHindi ? 'सहयोग / दान' : 'Donate'}</span>
-            </button>
+            </Link>
 
             {/* Mobile Hamburger Button */}
             <button

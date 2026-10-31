@@ -22,6 +22,7 @@ import Why from './pages/Why';
 import How from './pages/How';
 import Partners from './pages/Partners';
 import Pledge from './pages/Pledge';
+import Donate from './pages/Donate';
 
 const PLEDGE_STORAGE_KEY = 'prithviwasi_pledge';
 const PLEDGE_DISMISSED_KEY = 'prithviwasi_first_login_pledge_dismissed';
@@ -104,7 +105,21 @@ function AppContent() {
 
     // Dispatch official email certificate
     try {
-      await sendPledgeEmail(record);
+      const res = await sendPledgeEmail(record);
+      if (res && res.registration) {
+        const updatedRecord = {
+          ...record,
+          id: res.registration.id || record.id,
+          name: res.registration.name || record.name,
+          email: res.registration.email || record.email,
+          language: res.registration.language || record.language,
+          timestamp: res.registration.timestamp || res.registration.registered_at || record.timestamp
+        };
+        setPledgeRecord(updatedRecord);
+        try {
+          localStorage.setItem(PLEDGE_STORAGE_KEY, JSON.stringify(updatedRecord));
+        } catch {}
+      }
     } catch (err) {
       console.warn(err);
     }
@@ -138,6 +153,7 @@ function AppContent() {
           <Route path="/how" element={<How />} />
           <Route path="/partners" element={<Partners />} />
           <Route path="/pledge" element={<Pledge />} />
+          <Route path="/donate" element={<Donate />} />
 
           {/* Fallbacks directly to Who */}
           <Route path="/home" element={<Navigate to="/who" replace />} />

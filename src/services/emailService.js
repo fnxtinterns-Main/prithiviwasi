@@ -46,6 +46,7 @@ export async function sendPledgeEmail(pledgeRecord) {
       if (data.success) {
         return {
           success: true,
+          alreadyRegistered: Boolean(data.already_registered || data.alreadyRegistered),
           emailSent: Boolean(data.emailSent || data.email_sent),
           message: data.message || `Certificate dispatched to ${email}!`,
           registration: data.registration || {
