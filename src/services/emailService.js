@@ -21,17 +21,13 @@ const NODE_ENDPOINT = '/api/pledges';
 export async function sendPledgeEmail(pledgeRecord) {
   const { name, email, role, language = 'hi', id } = pledgeRecord;
 
-  const idempotencyKey = id
-    ? `pledge-${id}-${encodeURIComponent(email)}`.slice(0, 80)
-    : `pledge-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
-
   const payload = {
     name,
     email,
     role: role || 'Dedicated Citizen',
     language: language === 'en' ? 'en' : 'hi',
-    idempotencyKey,
-    idempotency_key: idempotencyKey
+    registration_id: id || undefined,
+    id: id || undefined
   };
 
   // 1. Try PHP Endpoint first (Hostinger Native)
@@ -40,8 +36,7 @@ export async function sendPledgeEmail(pledgeRecord) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Accept: 'application/json',
-        'Idempotency-Key': idempotencyKey
+        Accept: 'application/json'
       },
       body: JSON.stringify(payload)
     });

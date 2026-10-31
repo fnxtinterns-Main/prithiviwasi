@@ -180,12 +180,11 @@ function database(): ?PDO
             ]
         );
 
-        // Ensure pledge_registrations table exists
+        // Ensure pledge_registrations table exists without redundant columns
         $pdo->exec("
             CREATE TABLE IF NOT EXISTS `pledge_registrations` (
                 `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                `registration_id` CHAR(36) NOT NULL UNIQUE,
-                `idempotency_key` VARCHAR(100) NOT NULL UNIQUE,
+                `registration_id` VARCHAR(64) NOT NULL UNIQUE,
                 `full_name` VARCHAR(150) NOT NULL,
                 `email` VARCHAR(254) NOT NULL,
                 `language` ENUM('en', 'hi') NOT NULL DEFAULT 'hi',
@@ -196,6 +195,13 @@ function database(): ?PDO
                 INDEX idx_pledge_email (email)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
         ");
+
+        // Backward compatibility: If an existing table has idempotency_key, make it nullable so inserts without it succeed cleanly
+        try {
+            $pdo->exec("ALTER TABLE `pledge_registrations` MODIFY `idempotency_key` VARCHAR(100) NULL DEFAULT NULL");
+        } catch (Throwable $ignored) {
+            // Table doesn't have idempotency_key or already modified, which is expected
+        }
 
         return $pdo;
     } catch (Throwable $e) {
