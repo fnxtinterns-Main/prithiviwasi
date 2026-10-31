@@ -31,6 +31,18 @@ const DEFAULT_CONFIG = [
 ];
 
 /**
+ * Common JSON Response helper
+ */
+if (!function_exists('respond')) {
+    function respond(int $status, array $data): never
+    {
+        http_response_code($status);
+        echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        exit;
+    }
+}
+
+/**
  * Parse an .env file safely.
  */
 function loadProjectEnvFile(string $path): array

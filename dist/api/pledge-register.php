@@ -14,14 +14,16 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, OPTIONS, GET');
 header('Access-Control-Allow-Headers: Content-Type, Idempotency-Key, Authorization');
 
-function respond(int $status, array $data): never
-{
-    http_response_code($status);
-    echo json_encode(
-        $data,
-        JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
-    );
-    exit;
+if (!function_exists('respond')) {
+    function respond(int $status, array $data): never
+    {
+        http_response_code($status);
+        echo json_encode(
+            $data,
+            JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+        );
+        exit;
+    }
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
