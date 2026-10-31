@@ -104,6 +104,7 @@ function generatePledgeCertificate(array $record): string
     $sigSecBase64 = getAssetBase64('sig_sec_trans.png');
     $leafBase64 = getAssetBase64('cert_leaf_trans.png');
     $ornamentBase64 = getAssetBase64('cert_ornament.png');
+    $handshakeBase64 = getAssetBase64('cert_handshake_seal.png');
 
     $logoHtml = $logoBase64 !== ''
         ? '<img class="top-logo-img" src="data:image/png;base64,' . $logoBase64 . '" alt="PRITHVIWASI" />'
@@ -126,6 +127,10 @@ function generatePledgeCertificate(array $record): string
 
     $ornamentHtml = $ornamentBase64 !== ''
         ? '<div class="bottom-ornament"><img class="ornament-img" src="data:image/png;base64,' . $ornamentBase64 . '" /></div>'
+        : '';
+
+    $handshakeHtml = $handshakeBase64 !== ''
+        ? '<div class="handshake-seal-wrap"><img class="handshake-seal-img" src="data:image/png;base64,' . $handshakeBase64 . '" alt="Trust &amp; Unity Handshake" /><div class="handshake-caption">Trust &bull; Unity &bull; Partnership</div></div>'
         : '';
 
     $html = <<<HTML
@@ -369,10 +374,34 @@ function generatePledgeCertificate(array $record): string
         border-collapse: collapse;
     }
     .sig-td {
-        width: 50%;
+        width: 36%;
         text-align: center;
         vertical-align: bottom;
-        padding: 0 15px;
+        padding: 0 10px;
+    }
+    .sig-center-td {
+        width: 28%;
+        text-align: center;
+        vertical-align: middle;
+        padding: 0 4px;
+    }
+    .handshake-seal-wrap {
+        text-align: center;
+        display: inline-block;
+    }
+    .handshake-seal-img {
+        height: 62px;
+        width: auto;
+        display: block;
+        margin: 0 auto;
+    }
+    .handshake-caption {
+        font-size: 7px;
+        font-weight: bold;
+        color: #14532d;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        margin-top: 3px;
     }
     .sig-img {
         height: 32px;
@@ -380,7 +409,7 @@ function generatePledgeCertificate(array $record): string
     }
     .sig-line {
         border-top: 1px solid #14532d;
-        width: 140px;
+        width: 130px;
         margin: 0 auto 3px auto;
     }
     .sig-role {
@@ -460,6 +489,9 @@ function generatePledgeCertificate(array $record): string
                         {$sigPresHtml}
                         <div class="sig-line"></div>
                         <span class="sig-role">Founder &amp; President</span>
+                    </td>
+                    <td class="sig-center-td">
+                        {$handshakeHtml}
                     </td>
                     <td class="sig-td">
                         {$sigSecHtml}

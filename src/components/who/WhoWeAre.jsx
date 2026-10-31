@@ -2,6 +2,8 @@ import React from 'react';
 import { useModal } from '../../context/ModalContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { ShieldCheck, Heart, Award, CheckCircle2, MapPin, Calendar, Hash, Sparkles, Building2 } from 'lucide-react';
+import womensPowerImg from '../../assets/womens_power.jpg';
+import youthPowerImg from '../../assets/youth_power.jpg';
 
 export default function WhoWeAre() {
   const { openRegModal } = useModal();
@@ -110,6 +112,230 @@ export default function WhoWeAre() {
                 ? 'आने वाली पीढ़ियों को व्यसनमुक्त, संस्कारी, साहसी और राष्ट्र-समर्पित नागरिक बनाना।'
                 : 'Instilling ancestral ethics, youth discipline, and community self-reliance.'}
             </p>
+          </div>
+        </div>
+
+        {/* ======================================================== */}
+        {/* DEDICATED SECTION: WOMEN'S POWER & YOUTH POWER           */}
+        {/* ======================================================== */}
+        <div className="my-16 sm:my-20">
+          {/* Section Header */}
+          <div className="text-center max-w-3xl mx-auto space-y-3 mb-10 sm:mb-12">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-50 text-[#0b5e34] border border-emerald-200 shadow-2xs mx-auto">
+              <Sparkles className="w-4 h-4 text-[#0b5e34]" />
+              <span>
+                {isHindi
+                  ? 'राष्ट्र निर्माण के दो मुख्य स्तंभ'
+                  : 'Two Pillars of Nation Building'}
+              </span>
+            </span>
+
+            <h3 className="text-2xl sm:text-3xl lg:text-4xl font-black text-gray-900 tracking-tight leading-tight font-serif">
+              {isHindi ? (
+                <>
+                  <span className="text-[#ea580c]">महिला शक्ति</span> एवं{' '}
+                  <span className="text-[#0b5e34]">युवा शक्ति</span> का सशक्तिकरण
+                </>
+              ) : (
+                <>
+                  Empowering <span className="text-[#ea580c]">Women's Power</span> &amp;{' '}
+                  <span className="text-[#0b5e34]">Youth Power</span>
+                </>
+              )}
+            </h3>
+
+            <p className="text-sm sm:text-base text-gray-600 font-medium max-w-2xl mx-auto">
+              {isHindi
+                ? 'सशक्त नारी, जाग्रत युवा — आत्मनिर्भर, संस्कारित व समृद्ध भारत की आधारशिला।'
+                : 'Empowered women, awakened youth — the bedrock of a self-reliant and resilient nation.'}
+            </p>
+          </div>
+
+          {/* Equal Importance 2-Card Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
+            {/* CARD A: WOMEN'S POWER (महिला शक्ति) */}
+            <div className="group rounded-3xl bg-white border border-rose-100 shadow-sm hover:shadow-xl hover:border-rose-200 transition-all duration-300 overflow-hidden flex flex-col">
+              {/* Image Container with Badge */}
+              <div className="relative aspect-video sm:aspect-[16/10] overflow-hidden bg-rose-50">
+                <img
+                  src={womensPowerImg}
+                  alt={isHindi ? 'महिला शक्ति' : "Women's Power"}
+                  className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                  loading="lazy"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-transparent" />
+                <div className="absolute top-4 left-4">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-white/95 text-rose-800 backdrop-blur-xs shadow-md">
+                    <Heart className="w-3.5 h-3.5 text-rose-600 fill-rose-600" />
+                    <span>{isHindi ? 'मातृशक्ति वंदन' : "Women's Empowerment"}</span>
+                  </span>
+                </div>
+                <div className="absolute bottom-3 left-4 right-4 text-white">
+                  <p className="font-serif text-xs sm:text-sm font-semibold tracking-wide text-rose-100 italic">
+                    {isHindi
+                      ? '“यत्र नार्यस्तु पूज्यन्ते रमन्ते तत्र देवताः”'
+                      : '"Where women are honored, divinity blossoms"'}
+                  </p>
+                </div>
+              </div>
+
+              {/* Card Body */}
+              <div className="p-6 sm:p-8 flex-1 flex flex-col justify-between space-y-5">
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+                    <span className="text-xs font-bold uppercase tracking-wider text-rose-700">
+                      {isHindi ? 'आत्मनिर्भरता एवं स्वावलंबन' : 'Leadership & Independence'}
+                    </span>
+                  </div>
+
+                  <h4 className="text-xl sm:text-2xl font-black text-gray-900 font-serif mb-3">
+                    {isHindi ? 'महिला शक्ति (Women\'s Power)' : 'Women\'s Power & Leadership'}
+                  </h4>
+
+                  <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
+                    {isHindi
+                      ? 'ग्रामीण व वनवासी महिलाओं को सशक्त, आत्मविश्वासी और आत्मनिर्भर बनाना हमारे संगठन का प्रमुख उद्देश्य है। शिक्षा, स्वास्थ्य और आजीविका के माध्यम से महिलाएं समाज व राष्ट्र निर्माण में अग्रणी भूमिका निभा रही हैं।'
+                      : 'Nurturing self-reliance, confidence, and leadership among rural and tribal women. Through education, vocational mastery, and maternal care, women actively spearhead community transformation.'}
+                  </p>
+                </div>
+
+                {/* Key Highlights Bullet List */}
+                <div className="space-y-3 pt-4 border-t border-rose-50 text-xs sm:text-sm">
+                  <div className="flex items-start gap-2.5">
+                    <CheckCircle2 className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                    <span className="text-gray-700">
+                      <strong>{isHindi ? 'सशक्तिकरण एवं नेतृत्व:' : 'Empowerment & Leadership:'}</strong>{' '}
+                      {isHindi
+                        ? 'पंचायतों और ग्रामीण विकास निर्णयों में महिलाओं की समान भागीदारी और नेतृत्व क्षमता का विकास।'
+                        : 'Fostering equal participation and leadership in local community governance.'}
+                    </span>
+                  </div>
+
+                  <div className="flex items-start gap-2.5">
+                    <CheckCircle2 className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                    <span className="text-gray-700">
+                      <strong>{isHindi ? 'शिक्षा एवं जागरूकता:' : 'Education & Awareness:'}</strong>{' '}
+                      {isHindi
+                        ? 'बालिका शिक्षा, पोषण, स्वच्छता एवं विधिक अधिकारों के प्रति जागरूकता अभियान।'
+                        : 'Comprehensive girl child education, healthcare awareness, and legal literacy.'}
+                    </span>
+                  </div>
+
+                  <div className="flex items-start gap-2.5">
+                    <CheckCircle2 className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                    <span className="text-gray-700">
+                      <strong>{isHindi ? 'स्वरोजगार व स्वावलंबन:' : 'Vocational Self-Reliance:'}</strong>{' '}
+                      {isHindi
+                        ? 'हस्तशिल्प, लघु उद्योग और कौशल प्रशिक्षण से माताओं-बहनों को आर्थिक रूप से आत्मनिर्भर बनाना।'
+                        : 'Skill training and cottage entrepreneurship for financial self-reliance.'}
+                    </span>
+                  </div>
+
+                  <div className="flex items-start gap-2.5">
+                    <CheckCircle2 className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                    <span className="text-gray-700">
+                      <strong>{isHindi ? 'राष्ट्र निर्माण में योगदान:' : 'Nation Building:'}</strong>{' '}
+                      {isHindi
+                        ? 'परिवार के संस्कारों से लेकर समाज की प्रगति में महिलाओं के अमूल्य योगदान का सम्मान।'
+                        : 'Honoring and amplifying women’s indispensable contribution to our shared future.'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* CARD B: YOUTH POWER (युवा शक्ति) */}
+            <div className="group rounded-3xl bg-white border border-emerald-100 shadow-sm hover:shadow-xl hover:border-emerald-200 transition-all duration-300 overflow-hidden flex flex-col">
+              {/* Image Container with Badge */}
+              <div className="relative aspect-video sm:aspect-[16/10] overflow-hidden bg-emerald-50">
+                <img
+                  src={youthPowerImg}
+                  alt={isHindi ? 'युवा शक्ति' : "Youth Power"}
+                  className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                  loading="lazy"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-transparent" />
+                <div className="absolute top-4 left-4">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-white/95 text-emerald-800 backdrop-blur-xs shadow-md">
+                    <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>{isHindi ? 'जाग्रत युवा' : "Youth Leadership"}</span>
+                  </span>
+                </div>
+                <div className="absolute bottom-3 left-4 right-4 text-white">
+                  <p className="font-serif text-xs sm:text-sm font-semibold tracking-wide text-emerald-100 italic">
+                    {isHindi
+                      ? '“उत्तिष्ठत जाग्रत प्राप्य वरान्निबोधत”'
+                      : '"Arise, awake, and stop not till the goal is reached"'}
+                  </p>
+                </div>
+              </div>
+
+              {/* Card Body */}
+              <div className="p-6 sm:p-8 flex-1 flex flex-col justify-between space-y-5">
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                    <span className="text-xs font-bold uppercase tracking-wider text-emerald-700">
+                      {isHindi ? 'ऊर्जा, नवाचार एवं संस्कार' : 'Innovation & Social Service'}
+                    </span>
+                  </div>
+
+                  <h4 className="text-xl sm:text-2xl font-black text-gray-900 font-serif mb-3">
+                    {isHindi ? 'युवा शक्ति (Youth Power)' : 'Youth Power & Innovation'}
+                  </h4>
+
+                  <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
+                    {isHindi
+                      ? 'युवा पीढ़ी ही राष्ट्र के नव-निर्माण की सबसे बड़ी प्रेरक शक्ति है। संगठन युवाओं को व्यसनमुक्त जीवन, आधुनिक कौशल, नैतिक संस्कार और पर्यावरण संरक्षण के कार्यों से जोड़कर राष्ट्र सेवा हेतु तैयार करता है।'
+                      : 'Channeling youth energy into constructive nation-building. Inspiring young citizens through addiction-free living, technological skills, civic responsibility, and environmental activism.'}
+                  </p>
+                </div>
+
+                {/* Key Highlights Bullet List */}
+                <div className="space-y-3 pt-4 border-t border-emerald-50 text-xs sm:text-sm">
+                  <div className="flex items-start gap-2.5">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <span className="text-gray-700">
+                      <strong>{isHindi ? 'नेतृत्व एवं सहभागिता:' : 'Youth Leadership:'}</strong>{' '}
+                      {isHindi
+                        ? 'ग्राम उत्थान, आपदा राहत और सामाजिक सुधार में युवाओं का अग्रिम पंक्ति में नेतृत्व।'
+                        : 'Equipping youth to lead frontline village transformation and civic relief efforts.'}
+                    </span>
+                  </div>
+
+                  <div className="flex items-start gap-2.5">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <span className="text-gray-700">
+                      <strong>{isHindi ? 'शिक्षा, कौशल व नवाचार:' : 'Skills & Innovation:'}</strong>{' '}
+                      {isHindi
+                        ? 'आधुनिक तकनीकी ज्ञान, सौर ऊर्जा, पर्यावरण विज्ञान और स्वरोजगार कौशल प्रशिक्षण।'
+                        : 'Imparting practical skills in clean solar technology, digital learning, and green trades.'}
+                    </span>
+                  </div>
+
+                  <div className="flex items-start gap-2.5">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <span className="text-gray-700">
+                      <strong>{isHindi ? 'पर्यावरण संरक्षण में योगदान:' : 'Eco-Protection Action:'}</strong>{' '}
+                      {isHindi
+                        ? 'सघन वृक्षारोपण, जल स्रोत पुनर्जीवन एवं एकल-उपयोग प्लास्टिक मुक्ति का महा-अभियान।'
+                        : 'Active stewardship in native afforestation, water body restoration, and plastic cleanup.'}
+                    </span>
+                  </div>
+
+                  <div className="flex items-start gap-2.5">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <span className="text-gray-700">
+                      <strong>{isHindi ? 'सामाजिक दायित्व व चरित्र:' : 'Character & Ethics:'}</strong>{' '}
+                      {isHindi
+                        ? 'संस्कारित, नशामुक्त और राष्ट्र-प्रथम की भावना से ओतप्रोत जिम्मेदार युवा नागरिक तैयार करना।'
+                        : 'Cultivating ethical character, nation-first commitment, and substance-free lifestyle.'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 

@@ -6,6 +6,7 @@ import ScrollToTop from './components/common/ScrollToTop';
 import Navbar from './components/common/Navbar';
 import Footer from './components/common/Footer';
 import DonateButton from './components/common/DonateButton';
+import BackToTop from './components/common/BackToTop';
 import RegistrationModal from './components/common/RegistrationModal';
 import DonationModal from './components/common/DonationModal';
 import PledgeAlertModal from './components/PledgeAlertModal';
@@ -117,7 +118,7 @@ function AppContent() {
   }, []);
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#f8faf9] text-gray-900 font-sans selection:bg-emerald-200 selection:text-emerald-950">
+    <div className="flex flex-col min-h-screen w-full max-w-full overflow-x-hidden bg-[#f8faf9] text-gray-900 font-sans selection:bg-emerald-200 selection:text-emerald-950">
       <ScrollToTop />
 
       {/* Show Navbar on ALL pages EXCEPT the full-screen cinematic landing poster */}
@@ -145,9 +146,10 @@ function AppContent() {
         </Routes>
       </main>
 
-      {/* Show Footer and Floating Donate Button on all pages except the landing poster */}
+      {/* Show Footer and Floating Action Buttons on all pages except the landing poster */}
       {!isLanding && <Footer />}
       {!isLanding && <DonateButton />}
+      {!isLanding && <BackToTop />}
 
       {/* Global Modals: Trust Registration Details & Donation */}
       <RegistrationModal />

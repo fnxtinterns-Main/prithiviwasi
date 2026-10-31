@@ -38,22 +38,13 @@ export default function LandingPage() {
       {/* ======================================================================
           A. DESKTOP VIEWPORT PRESENTATION (WIDESCREEN & LAPTOPS >= 769px)
           ====================================================================== */}
-      <motion.div
+      <div
         className="desktop-hero-scene"
         aria-hidden="true"
-        initial={{ filter: 'blur(20px)', opacity: 0.85 }}
-        animate={{ filter: 'blur(0px)', opacity: 1 }}
-        transition={{ duration: 2, ease: 'easeOut' }}
       />
 
       {/* Top-Left Crisp Vector Brand Pill for Desktop */}
-      <motion.div
-        initial={{ opacity: 0, y: -15 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1.2, delay: 0.3 }}
-      >
-        <BrandPill className="desktop-only-pill" />
-      </motion.div>
+      <BrandPill className="desktop-only-pill" />
 
       {/* Floating Nature Leaves & Spores Canvas Layer */}
       <NatureCanvas />

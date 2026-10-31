@@ -1,113 +1,68 @@
 import React, { useState } from 'react';
 import { useLanguage } from '../../context/LanguageContext';
-import { Camera, ZoomIn, X, ChevronLeft, ChevronRight, Pause, Play, Sparkles, Layers, Image as ImageIcon } from 'lucide-react';
+import { Camera, ZoomIn, X, ChevronLeft, ChevronRight, Sparkles, Layers } from 'lucide-react';
 
 export default function FieldAlbumMarquee() {
-  const { isHindi, language } = useLanguage();
+  const { isHindi } = useLanguage();
   const [activePhoto, setActivePhoto] = useState(null);
   const [activePhotoIndex, setActivePhotoIndex] = useState(0);
   const [showFullGalleryModal, setShowFullGalleryModal] = useState(false);
 
-  // Curated list of representative field photos showcasing all initiatives
+  // Curated list of the TOP 20 representative field photos showcasing all initiatives
   const curatedPhotos = [
     {
       src: '/assets/who_images/2006_cremation.jpeg',
-      titleEn: 'Respectful Last Rites of Unclaimed Bodies',
-      titleHi: 'लावारिस शवों का ससम्मान दाह संस्कार',
-      catEn: 'Cremation Seva (2006)',
-      catHi: 'अंतिम संस्कार सेवा (२००६)',
-      descEn: 'Solemn cremation and last rites performed by trust founders at the crematorium pyre.',
+      titleEn: 'Respectful Last Rites of Unclaimed Souls (2006)',
+      titleHi: 'लावारिस शवों का ससम्मान दाह संस्कार (२००६)',
+      catEn: 'Cremation Seva',
+      catHi: 'अंतिम संस्कार सेवा',
+      descEn: 'Solemn cremation and Vedic last rites performed by trust founders at the crematorium pyre.',
       descHi: 'संस्थापकों द्वारा श्मशान घाट पर लावारिस शवों को ससम्मान मुखाग्नि व धार्मिक विधि-विधान।',
     },
     {
       src: '/assets/who_images/2006_cremation_pyre.jpeg',
       titleEn: 'Sacred Pyre for Departed Souls',
       titleHi: 'दिवंगत आत्माओं हेतु पवित्र अग्नि संस्कार',
-      catEn: 'Crematorium Ground',
-      catHi: 'श्मशान स्थल',
-      descEn: 'Ensuring human dignity and Vedic rituals for every abandoned soul.',
+      catEn: 'Human Dignity',
+      catHi: 'मानवीय गरिमा',
+      descEn: 'Ensuring human dignity and sacred Vedic rituals for every abandoned soul.',
       descHi: 'हर बेसहारा आत्मा की मानवीय गरिमा और वैदिक मर्यादा की रक्षा।',
     },
     {
-      src: '/assets/who_images/2010_gaushala_seva.jpeg',
-      titleEn: 'Gaushala Sanctuary & Cattle Care',
-      titleHi: 'गौशाला आश्रय एवं नंदी सेवा',
-      catEn: 'Animal Welfare',
-      catHi: 'पशु कल्याण व जीव दया',
-      descEn: 'Shelter, medical care, and fresh green fodder for destitute indigenous cows and bulls.',
-      descHi: 'बेसहारा गायों व बछड़ों के लिए स्थायी आश्रय, चारा और नियमित चिकित्सा।',
+      src: '/assets/who_album/album_001.jpg',
+      titleEn: 'Slum Child Education & Women Vocational Training',
+      titleHi: 'बस्ती बाल शिक्षा एवं महिला सिलाई प्रशिक्षण',
+      catEn: 'Education & Skills',
+      catHi: 'शिक्षा व कौशल',
+      descEn: 'Free foundational schooling for slum children and tailoring skills for women.',
+      descHi: 'कच्ची बस्तियों में बच्चों को बुनियादी शिक्षा व माताओं-बहनों को सिलाई-कढ़ाई प्रशिक्षण।',
     },
     {
-      src: '/assets/who_images/2014_oldage_medical_camp.jpeg',
-      titleEn: 'Old Age Home & Free Medical Camp',
-      titleHi: 'वृद्धजन आश्रय व निःशुल्क स्वास्थ्य शिविर',
-      catEn: 'Healthcare & Elder Care',
-      catHi: 'स्वास्थ्य व वृद्ध सेवा',
-      descEn: 'Free medicine distribution and health checkups in Ratu block.',
-      descHi: 'रातू प्रखण्ड में असहाय बुजुर्गों को निःशुल्क परामर्श व दवाइयों का वितरण।',
+      src: '/assets/who_album/album_002.jpg',
+      titleEn: 'Dedicated Rural Classroom Learning Session',
+      titleHi: 'ग्रामीण बालिकाओं का लगनशील अध्ययन सत्र',
+      catEn: 'Girl Child Education',
+      catHi: 'बालिका शिक्षा',
+      descEn: 'Village children in uniform studying with notebooks and pencils on the floor.',
+      descHi: 'सुदूर गांव में यूनिफॉर्म पहनकर जमीन पर बैठकर एकाग्रचित्त होकर पढ़ती बेटियां।',
+    },
+    {
+      src: '/assets/who_album/album_003.jpg',
+      titleEn: 'School Assembly & Moral Education Camp',
+      titleHi: 'विद्यालयी संस्कार एवं नैतिक शिक्षा शिविर',
+      catEn: 'Character Building',
+      catHi: 'चरित्र निर्माण',
+      descEn: 'Large hall assembly of students receiving moral values and environmental guidance.',
+      descHi: 'विद्यालय सभागार में बड़ी संख्या में विद्यार्थियों को संस्कार व पर्यावरण मार्गदर्शन।',
     },
     {
       src: '/assets/who_images/2017_slum_training_sample.jpeg',
-      titleEn: 'Slum Children Study & Women Sewing Classes',
-      titleHi: 'बस्ती बाल शिक्षा एवं महिला सिलाई प्रशिक्षण',
-      catEn: 'Women & Child Education',
-      catHi: 'महिला व बाल शिक्षा',
-      descEn: 'Free tailoring courses for women and foundational learning circles for slum kids.',
-      descHi: 'बस्तियों में महिलाओं को सिलाई-कढ़ाई व बच्चों को निःशुल्क संस्कार शिक्षा।',
-    },
-    {
-      src: '/assets/who_images/2019_food_ration_distribution.jpeg',
-      titleEn: 'Annapurna Hot Meal & Nutrition Seva',
-      titleHi: 'अन्नपूर्णा भोजन एवं पौष्टिक आहार सेवा',
-      catEn: 'Nutrition Relief',
-      catHi: 'अन्नदान व पोषण',
-      descEn: 'Fresh nutritious meals and sweet packets distributed to families in need.',
-      descHi: 'जरूरतमंद परिवारों और बच्चों तक ताजा पौष्टिक भोजन व आहार का वितरण।',
-    },
-    {
-      src: '/assets/who_images/2021_village_welfare_tribal.jpeg',
-      titleEn: 'Tribal Hamlet Direct Family Outreach',
-      titleHi: 'दूरस्थ वनवासी व ग्रामीण परिवार संवाद',
-      catEn: 'Tribal Welfare',
-      catHi: 'जनजातीय उत्थान',
-      descEn: 'Reaching deep into forest settlements with warmth, clothing, and empathy.',
-      descHi: 'सुदूर वनवासी बस्तियों में पहुंचकर आत्मीय संवाद, वस्त्र व सहायता वितरण।',
-    },
-    {
-      src: '/assets/who_images/2022_differently_abled_elders.jpeg',
-      titleEn: 'Differently-Abled & Senior Citizens Seva',
-      titleHi: 'दिव्यांग बंधु एवं वरिष्ठ जन सहयोग शिविर',
-      catEn: 'Inclusion & Mobility',
-      catHi: 'दिव्यांग सहयोग',
-      descEn: 'Assistance, moral solidarity, and community care for elders with special needs.',
-      descHi: 'दिव्यांगजनों और बुजुर्गों के लिए सहायक संसाधन व सामाजिक सम्मान।',
-    },
-    {
-      src: '/assets/who_images/2023_youth_sanskar_defense.jpeg',
-      titleEn: 'Youth Traditional Martial Sports & Sanskar',
-      titleHi: 'पारंपरिक अस्त्र-शस्त्र चालन व युवा संस्कार',
-      catEn: 'Youth & Discipline',
-      catHi: 'युवा चेतना व चरित्र',
-      descEn: 'State tournament championing physical self-defense, character, and unity.',
-      descHi: 'राज्य स्तरीय पारंपरिक खेल प्रतियोगिता, आत्मरक्षा व चरित्र निर्माण।',
-    },
-    {
-      src: '/assets/who_images/2024_community_meeting.jpeg',
-      titleEn: 'Community Assembly & Environmental Council',
-      titleHi: 'सामुदायिक ग्राम सभा व पर्यावरण चेतना',
-      catEn: 'Community Solidarity',
-      catHi: 'जन-सहभागिता',
-      descEn: 'Mass village gatherings mobilizing citizens for the National Environmental Pledge.',
-      descHi: 'पर्यावरण संरक्षण संकल्प और समाज सुधार हेतु नागरिकों की सामूहिक सभा।',
-    },
-    {
-      src: '/assets/who_images/2008_trust_founders_press.jpeg',
-      titleEn: 'Trust Deed & Institutional Integrity',
-      titleHi: 'संस्थापक गण एवं विधिक ट्रस्ट विलेख',
-      catEn: 'Legal Credentials',
-      catHi: 'वैधानिक पंजीकरण',
-      descEn: 'Trustees holding the official trust records and public newspaper coverage.',
-      descHi: 'संस्थापकों द्वारा ट्रस्ट विलेख और जन-कल्याण के समाचार अभिलेखों का प्रदर्शन।',
+      titleEn: 'Women Sewing & Livelihood Center',
+      titleHi: 'महिला सिलाई केंद्र एवं स्वावलंबन',
+      catEn: 'Women Empowerment',
+      catHi: 'महिला स्वावलंबन',
+      descEn: 'Equipping rural and slum women with sewing machines for financial self-reliance.',
+      descHi: 'महिलाओं को सिलाई मशीनों पर प्रशिक्षण देकर आर्थिक रूप से आत्मनिर्भर बनाना।',
     },
     {
       src: '/assets/who_album/album_012.jpg',
@@ -115,49 +70,118 @@ export default function FieldAlbumMarquee() {
       titleHi: 'आदर्श सामूहिक विवाह महोत्सव',
       catEn: 'Samuhik Vivah',
       catHi: 'सामूहिक विवाह',
-      descEn: 'Solemn mass wedding ceremony organized for underprivileged couples with full traditional rituals, bridal gifts, and community blessings.',
-      descHi: 'निर्धन व जरूरतमंद कन्याओं का संपूर्ण विधि-विधान, वैवाहिक उपहार और आशीर्वाद के साथ सामूहिक विवाह का पावन आयोजन।',
-    },
-    {
-      src: '/assets/who_album/album_035.jpg',
-      titleEn: 'Community Nutrition Assembly',
-      titleHi: 'सामुदायिक पोषण आहार वितरण',
-      catEn: 'Ration Seva',
-      catHi: 'राशन सेवा',
-      descEn: 'Distribution of ration kits and warm meals in settlement clusters.',
-      descHi: 'बस्ती में राशन सामग्री और पौष्टिक आहार का व्यवस्थित वितरण।',
-    },
-    {
-      src: '/assets/who_album/album_060.jpg',
-      titleEn: 'Traditional Youth Champions Felicitated',
-      titleHi: 'मेधावी युवाओं का सम्मान समारोह',
-      catEn: 'Awards & Honors',
-      catHi: 'सम्मान व प्रोत्साहन',
-      descEn: 'Honoring young village leaders and athletic champions with trophies.',
-      descHi: 'उत्कृष्ट प्रदर्शन करने वाले होनहार युवाओं को पुरस्कार व सम्मान।',
-    },
-    {
-      src: '/assets/who_album/album_085.jpg',
-      titleEn: 'Sacred Nature & Tree Plantation Gathering',
-      titleHi: 'प्रकृति वंदन एवं सामूहिक वृक्षारोपण',
-      catEn: 'Environment Drive',
-      catHi: 'पर्यावरण अभियान',
-      descEn: 'Villagers gathering to revere sacred groves and plant native trees.',
-      descHi: 'ग्रामीणों का एकत्र होकर पौधे लगाना और प्रकृति की रक्षा का संकल्प।',
+      descEn: 'Grand mass wedding ceremony organized for underprivileged couples with full traditional rituals.',
+      descHi: 'निर्धन व जरूरतमंद कन्याओं का संपूर्ण विधि-विधान, उपहार और आशीर्वाद के साथ सामूहिक विवाह।',
     },
     {
       src: '/assets/who_album/album_120.jpg',
-      titleEn: 'Night Community Chaupal & Consultation',
-      titleHi: 'रात्रि ग्राम चौपाल एवं विचार-विमर्श',
-      catEn: 'Village Governance',
-      catHi: 'ग्राम चौपाल',
-      descEn: 'Late evening discussions with village elders addressing village challenges.',
-      descHi: 'ग्राम प्रधानों और बुजुर्गों के साथ गांव की समस्याओं पर सार्थक संवाद।',
+      titleEn: 'Gaushala Sanctuary & Calf Care',
+      titleHi: 'गौशाला आश्रय एवं बछड़ों की सेवा',
+      catEn: 'Cattle Welfare',
+      catHi: 'गौ-संरक्षण',
+      descEn: 'Safe permanent shelter, nutritious fodder, and medical attention for destitute cattle.',
+      descHi: 'बेसहारा गोवंश व बछड़ों के लिए स्थायी आश्रय, हरा चारा और नियमित देखभाल।',
+    },
+    {
+      src: '/assets/who_images/2010_gaushala_seva.jpeg',
+      titleEn: 'Gaushala Green Fodder Seva',
+      titleHi: 'गौशाला में हरा चारा व नंदी सेवा',
+      catEn: 'Animal Compassion',
+      catHi: 'जीव दया',
+      descEn: 'Trustees feeding fresh green fodder and water to indigenous cows and bulls.',
+      descHi: 'संस्थापकों द्वारा देसी गायों व नंदी महाराज को ताजा चारा और आहार खिलाते हुए।',
+    },
+    {
+      src: '/assets/who_album/album_140.jpg',
+      titleEn: 'Ramawata Old Age Home Medical Camp',
+      titleHi: 'रामावता वृद्धाश्रम (रातू) स्वास्थ्य शिविर',
+      catEn: 'Elder Care',
+      catHi: 'वृद्धजन सेवा',
+      descEn: 'Health camp and medical consultations for senior residents at Ramawata Old Age Home, Ratu.',
+      descHi: 'रातू प्रखण्ड स्थित रामावता वृद्धाश्रम में बुजुर्गों हेतु स्वास्थ्य परामर्श व सेवा शिविर।',
+    },
+    {
+      src: '/assets/who_images/2014_oldage_medical_camp.jpeg',
+      titleEn: 'Free Rural Health & Medicine Distribution',
+      titleHi: 'निःशुल्क ग्रामीण स्वास्थ्य व दवा वितरण',
+      catEn: 'Free Healthcare',
+      catHi: 'आरोग्य सेवा',
+      descEn: 'Free checkups and doctor consultations for elderly villagers in forest blocks.',
+      descHi: 'ग्रामीण व वृद्धजनों को निःशुल्क स्वास्थ्य परीक्षण एवं आवश्यक दवाइयों का वितरण।',
+    },
+    {
+      src: '/assets/who_album/album_025.jpg',
+      titleEn: 'Wheelchair & Winter Relief for Divyangjan',
+      titleHi: 'दिव्यांग बंधुओं को व्हीलचेयर व कम्बल सहयोग',
+      catEn: 'Divyang Support',
+      catHi: 'दिव्यांग सहयोग',
+      descEn: 'Distribution of wheelchairs, warm blankets, and mobility aids to disabled elders.',
+      descHi: 'दिव्यांग व वृद्धजनों को व्हीलचेयर, गर्म कम्बल और सहायता उपकरणों का वितरण।',
+    },
+    {
+      src: '/assets/who_images/2019_food_ration_distribution.jpeg',
+      titleEn: 'Annapurna Hot Meal & Nutrition Seva',
+      titleHi: 'अन्नपूर्णा भोजन एवं पौष्टिक आहार सेवा',
+      catEn: 'Nutrition Relief',
+      catHi: 'अन्नदान व पोषण',
+      descEn: 'Nutritious cooked meals and food packets distributed to vulnerable slum families.',
+      descHi: 'जरूरतमंद परिवारों और बच्चों तक ताजा पौष्टिक भोजन व अन्नदान सेवा।',
+    },
+    {
+      src: '/assets/who_album/album_035.jpg',
+      titleEn: 'Community Nutrition & Ration Kit Drive',
+      titleHi: 'सामुदायिक राशन सामग्री वितरण अभियान',
+      catEn: 'Ration Seva',
+      catHi: 'राशन सेवा',
+      descEn: 'Distributing dry food rations, grains, and essentials in remote village settlements.',
+      descHi: 'सुदूर बस्तियों में जरूरतमंद परिवारों को सूखा राशन व खाद्यान्न किट का व्यवस्थित वितरण।',
+    },
+    {
+      src: '/assets/who_images/2023_youth_sanskar_defense.jpeg',
+      titleEn: 'Traditional Martial Sports & Youth Sanskar',
+      titleHi: 'पारंपरिक अस्त्र-शस्त्र चालन व युवा संस्कार',
+      catEn: 'Youth & Discipline',
+      catHi: 'युवा चेतना व खेल',
+      descEn: 'Youth championship fostering discipline, physical self-defense, and character building.',
+      descHi: 'राज्य स्तरीय पारंपरिक खेल प्रतियोगिता, आत्मरक्षा, अनुशासन व चरित्र निर्माण।',
+    },
+    {
+      src: '/assets/who_album/album_060.jpg',
+      titleEn: 'Youth Champions & Sports Felicitation',
+      titleHi: 'मेधावी युवा खिलाड़ियों का सम्मान समारोह',
+      catEn: 'Awards & Honors',
+      catHi: 'सम्मान व प्रोत्साहन',
+      descEn: 'Honoring outstanding young sports champions and village leaders with trophies.',
+      descHi: 'उत्कृष्ट प्रदर्शन करने वाले होनहार युवाओं को मंच पर ट्रॉफी व पुरस्कार से सम्मानित करते हुए।',
+    },
+    {
+      src: '/assets/who_album/album_085.jpg',
+      titleEn: 'Mass Nature Reverence & Afforestation',
+      titleHi: 'सामूहिक प्रकृति वंदन एवं वृक्षारोपण',
+      catEn: 'Environment Drive',
+      catHi: 'पर्यावरण अभियान',
+      descEn: 'Large gathering of citizens taking collective vows to plant native trees and protect soil.',
+      descHi: 'बड़ी संख्या में ग्रामीणों का एकत्र होकर पौधे लगाना और प्रकृति रक्षा का पावन संकल्प।',
+    },
+    {
+      src: '/assets/who_images/2021_village_welfare_tribal.jpeg',
+      titleEn: 'Direct Tribal Hamlet Outreach & Dialogue',
+      titleHi: 'दूरस्थ वनवासी व ग्रामीण परिवार संवाद',
+      catEn: 'Tribal Outreach',
+      catHi: 'जनजातीय उत्थान',
+      descEn: 'Reaching remote forest settlements with compassionate dialogue and direct relief.',
+      descHi: 'सुदूर वनवासी बस्तियों में पहुंचकर आत्मीय संवाद, वस्त्र व सहायता सामग्री वितरण।',
+    },
+    {
+      src: '/assets/who_images/2024_community_meeting.jpeg',
+      titleEn: 'National Environmental Pledge Gram Sabha',
+      titleHi: 'पर्यावरण चेतना एवं राष्ट्रीय प्रतिज्ञा ग्राम सभा',
+      catEn: 'Pledge Movement',
+      catHi: 'पर्यावरण संकल्प',
+      descEn: 'Community assembly mobilizing citizens to undertake the National Environmental Pledge.',
+      descHi: 'पर्यावरण संरक्षण प्रतिज्ञा और समाज सुधार हेतु नागरिकों की विशाल सामूहिक ग्राम सभा।',
     },
   ];
-
-  // Total available photos from album
-  const totalAlbumCount = 229;
 
   const openLightbox = (photo, index) => {
     setActivePhoto(photo);
@@ -188,8 +212,8 @@ export default function FieldAlbumMarquee() {
               <Camera className="w-3.5 h-3.5 text-[#0b5e34]" />
               <span>
                 {isHindi
-                  ? 'धरातलीय छायाचित्र संग्रह • २२०+ वास्तविक तस्वीरें'
-                  : 'Grassroots Photo Album • 220+ Real Field Photos'}
+                  ? 'धरातलीय छायाचित्र संग्रह • २० प्रमुख प्रामाणिक तस्वीरें'
+                  : 'Grassroots Photo Album • 20 Top Verified Field Photos'}
               </span>
             </span>
 
@@ -201,21 +225,23 @@ export default function FieldAlbumMarquee() {
 
             <p className="mt-1 text-gray-600 text-xs sm:text-sm max-w-2xl">
               {isHindi
-                ? 'विगत दो दशकों में धरातल पर किए गए कार्यों की वास्तविक तस्वीरें। किसी भी तस्वीर पर कर्सर ले जाएं—एल्बम तुरंत रुक जाएगा।'
-                : 'Authentic photos from our two decades on the ground. Hover over any photo to pause movement and inspect in detail.'}
+                ? 'विगत दो दशकों में धरातल पर किए गए कार्यों की २० प्रमुख प्रामाणिक तस्वीरें। किसी भी तस्वीर पर कर्सर ले जाएं—एल्बम तुरंत रुक जाएगा।'
+                : '20 authentic photographs showcasing our two decades of work on the ground. Hover over any photo to pause movement and inspect in detail.'}
             </p>
           </div>
 
-          {/* Quick Action Button to View All 220+ Photos */}
-          <button
-            onClick={() => setShowFullGalleryModal(true)}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white hover:bg-emerald-50 text-[#0b5e34] font-bold text-xs sm:text-sm border border-emerald-300 shadow-xs hover:shadow-md transition-all cursor-pointer shrink-0 self-start md:self-auto"
-          >
-            <Layers className="w-4 h-4 text-[#ea580c]" />
-            <span>
-              {isHindi ? 'समस्त २२०+ तस्वीरें देखें ↗' : 'Browse All 220+ Photos ↗'}
-            </span>
-          </button>
+          {/* Action Button: Browse 20 Photos */}
+          <div className="shrink-0 self-start md:self-auto">
+            <button
+              onClick={() => setShowFullGalleryModal(true)}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white hover:bg-emerald-50 text-[#0b5e34] font-bold text-xs sm:text-sm border border-emerald-300 shadow-xs hover:shadow-md transition-all cursor-pointer"
+            >
+              <Layers className="w-4 h-4 text-[#ea580c]" />
+              <span>
+                {isHindi ? 'समस्त २० प्रमुख तस्वीरें देखें ↗' : 'Browse All 20 Photos ↗'}
+              </span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -343,7 +369,7 @@ export default function FieldAlbumMarquee() {
         </div>
       )}
 
-      {/* FULL GALLERY MODAL (BROWSE ALL 220+ ALBUM PHOTOS) */}
+      {/* FULL GALLERY MODAL (BROWSE ALL 20 CURATED PHOTOS) */}
       {showFullGalleryModal && (
         <div
           className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-200"
@@ -354,58 +380,62 @@ export default function FieldAlbumMarquee() {
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
-            <div className="p-5 border-b border-gray-200 flex items-center justify-between bg-[#f8faf9] shrink-0">
+            <div className="p-5 border-b border-gray-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#f8faf9] shrink-0">
               <div>
                 <span className="text-xs font-bold text-[#ea580c] uppercase tracking-wider block">
                   {isHindi ? 'धरातलीय छायाचित्र अभिलेखागार' : 'Grassroots Field Archive'}
                 </span>
                 <h3 className="text-xl font-black text-gray-900 font-serif">
-                  {isHindi ? 'समस्त २२९ छायाचित्रों की विस्तृत गैलरी' : 'Complete Archive of All 229 Field Photos'}
+                  {isHindi ? '२० प्रमुख धरातलीय सेवा छायाचित्र' : '20 Key Field Action Photographs'}
                 </h3>
               </div>
+
               <button
                 onClick={() => setShowFullGalleryModal(false)}
-                className="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-800 flex items-center justify-center transition-colors cursor-pointer"
+                className="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-800 flex items-center justify-center transition-colors cursor-pointer shrink-0"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Scrollable Grid of All 229 Album Photos */}
-            <div className="p-5 overflow-y-auto flex-1 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 bg-gray-50">
-              {Array.from({ length: totalAlbumCount }, (_, i) => {
-                const numStr = String(i + 1).padStart(3, '0');
-                const photoSrc = `/assets/who_album/album_${numStr}.jpg`;
+            {/* Scrollable Grid of 20 Curated Photos */}
+            <div className="p-5 overflow-y-auto flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 bg-gray-50">
+              {curatedPhotos.map((photo, i) => {
+                const title = isHindi ? photo.titleHi : photo.titleEn;
+                const category = isHindi ? photo.catHi : photo.catEn;
 
                 return (
                   <div
-                    key={photoSrc}
+                    key={photo.src}
                     onClick={() => {
                       setShowFullGalleryModal(false);
-                      setActivePhoto({
-                        src: photoSrc,
-                        titleEn: `Field Archive Photo #${numStr}`,
-                        titleHi: `धरातलीय सेवा छायाचित्र क्रमांक #${numStr}`,
-                        catEn: 'Field Record',
-                        catHi: 'सेवा अभिलेख',
-                        descEn: 'Authentic photograph captured during grassroots fieldwork in Jharkhand.',
-                        descHi: 'झारखण्ड में धरातलीय सेवा कार्यों के दौरान लिया गया वास्तविक छायाचित्र।',
-                      });
+                      openLightbox(photo, i);
                     }}
-                    className="group relative aspect-square bg-gray-200 rounded-xl overflow-hidden cursor-pointer border border-gray-300 hover:border-[#0b5e34] hover:shadow-md transition-all"
+                    className="group bg-white rounded-2xl overflow-hidden border border-gray-200 hover:border-[#0b5e34] hover:shadow-lg transition-all cursor-pointer flex flex-col justify-between"
                   >
-                    <img
-                      src={photoSrc}
-                      alt={`Album ${numStr}`}
-                      loading="lazy"
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                    />
-                    <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <ZoomIn className="w-5 h-5 text-white" />
+                    <div className="relative aspect-[4/3] bg-gray-100 overflow-hidden">
+                      <img
+                        src={photo.src}
+                        alt={title}
+                        loading="lazy"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                      <div className="absolute inset-0 bg-black/25 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <ZoomIn className="w-6 h-6 text-white" />
+                      </div>
+                      <span className="absolute top-2 left-2 px-2 py-0.5 rounded bg-[#0b5e34]/90 text-white text-[10px] font-bold">
+                        {category}
+                      </span>
+                      <span className="absolute bottom-2 right-2 px-1.5 py-0.5 rounded bg-black/60 text-white text-[10px] font-mono">
+                        #{String(i + 1).padStart(2, '0')}
+                      </span>
                     </div>
-                    <span className="absolute bottom-1 right-1.5 px-1.5 py-0.5 rounded bg-black/60 text-white text-[9px] font-mono">
-                      #{numStr}
-                    </span>
+
+                    <div className="p-3 bg-white">
+                      <h4 className="font-bold text-xs text-gray-900 line-clamp-1 font-serif group-hover:text-[#0b5e34]">
+                        {title}
+                      </h4>
+                    </div>
                   </div>
                 );
               })}
