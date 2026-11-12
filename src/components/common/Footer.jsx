@@ -214,6 +214,32 @@ export default function Footer() {
             <span>मानव कल्याण एवं प्रकृति वंदन</span>
           </div>
         </div>
+
+        {/* Designed by Technext AI Attribution */}
+        <div className="pt-4 mt-4 border-t border-emerald-800/50 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-emerald-200/70">
+          <div className="flex items-center gap-1.5">
+            <span>Designed by</span>
+            <a
+              href="https://technxtai.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-bold text-amber-400 hover:text-white transition-all underline decoration-amber-400/60 hover:decoration-white inline-flex items-center gap-1 cursor-pointer"
+            >
+              <span>Technext AI</span>
+              <ArrowUpRight className="w-3.5 h-3.5 text-amber-400" />
+            </a>
+          </div>
+          <div>
+            <a
+              href="https://technxtai.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-emerald-300/60 hover:text-amber-300 transition-colors text-[11px] cursor-pointer"
+            >
+              Visit Technext AI: technxtai.com ↗
+            </a>
+          </div>
+        </div>
       </div>
     </footer>
   );
